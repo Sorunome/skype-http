@@ -46,7 +46,7 @@ jobs:
   publish:
     name: Publish library to npm
     runs-on: ubuntu-latest
-    needs: test_check
+    needs: install_dependencies
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 12
