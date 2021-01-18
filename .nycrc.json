@@ -1,0 +1,11 @@
+{
+  "extends": "@istanbuljs/nyc-config-typescript",
+  "all": true,
+  "reporter": ["html", "text-summary"],
+  "report-dir": "./coverage",
+  "include": ["src/lib/**/*.ts"],
+  "exclude": ["src/custom-typings/*.*", "src/example/*.*"],
+  "recursive": "true",
+  "require": ["ts-node/register", "source-map-support/register"],
+  "sourceMap": true
+}

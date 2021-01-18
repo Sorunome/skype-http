@@ -1,4 +1,4 @@
-import {CookieJar, MemoryCookieStore, Store as CookieStore} from "tough-cookie";
+import toughCookie from 'tough-cookie';
 
 /**
  * Represents the OAuth token used for most calls to the Skype API.
@@ -20,7 +20,7 @@ export namespace SkypeToken {
   /**
    * Export a SkypeToken to a JSON-safe object.
    */
-  export function toJson(token: SkypeToken): SkypeToken.Json {
+  export function toJson(token: SkypeToken): Json {
     return {
       value: token.value,
       expirationDate: token.expirationDate.toISOString(),
@@ -30,7 +30,7 @@ export namespace SkypeToken {
   /**
    * Import a SkypeToken from a JSON-safe object.
    */
-  export function fromJson(token: SkypeToken.Json): SkypeToken {
+  export function fromJson(token: Json): SkypeToken {
     return {
       value: token.value,
       expirationDate: new Date(token.expirationDate),
@@ -39,7 +39,11 @@ export namespace SkypeToken {
 }
 
 /**
- * Represents the OAuth registration token. This token allows to subscribe to resources (receive messages).
+ * Represents the OAuth registration token.
+ * Here are some of the actions requiring a registration token:
+ * - set status
+ * - send message
+ * - get conversations list
  */
 export interface RegistrationToken {
   value: string;
@@ -47,6 +51,43 @@ export interface RegistrationToken {
   endpointId: string;
   host: string;
   raw: string;
+}
+
+/**
+ * Contains information that can be used to poll notifications and
+ * maintain the session active longPollUrl & isActiveUrl
+ */
+/*
+{
+  "id": "endpoint id, same as RegistrationToken.endpointId, but without the curly braces",
+  "endpointFeatures": "the registered feature, from registerEndpoint()",
+  "subscriptions": [
+    {
+      "channelType": "HttpLongPoll",
+      "interestedResources": [
+        "/v1/users/ME/conversations/ALL/properties",
+        "/v1/users/ME/conversations/ALL/messages",
+        "/v1/threads/ALL"
+      ],
+      "longPollUrl": "poll notifications endpoint"
+    }
+  ],
+  "isActiveUrl": "active session endpoint",
+  "longPollActiveTimeoutSupport": false
+}
+ */
+export interface RegistrationInfo {
+  id: string;
+  endpointFeatures: string;
+  subscriptions: Subscriptions[];
+  isActiveUrl: string;
+  longPollActiveTimeoutSupport: string;
+}
+
+export interface Subscriptions {
+  channelType: string;
+  interestedResources: any;
+  longPollUrl: string;
 }
 
 export namespace RegistrationToken {
@@ -64,7 +105,7 @@ export namespace RegistrationToken {
   /**
    * Export a RegistrationToken to a JSON-safe object.
    */
-  export function toJson(token: RegistrationToken): RegistrationToken.Json {
+  export function toJson(token: RegistrationToken): Json {
     return {
       value: token.value,
       expirationDate: token.expirationDate.toISOString(),
@@ -77,7 +118,7 @@ export namespace RegistrationToken {
   /**
    * Import a RegistrationToken from a JSON-safe object.
    */
-  export function fromJson(token: RegistrationToken.Json): RegistrationToken {
+  export function fromJson(token: Json): RegistrationToken {
     return {
       value: token.value,
       expirationDate: new Date(token.expirationDate),
@@ -94,9 +135,12 @@ export namespace RegistrationToken {
 // TODO(demurgos): Rename to `State` or even `ApiState` so it's easier to understand the purpose of this interface.
 export interface Context {
   username: string;
-  cookies: CookieStore;
+  cookies: toughCookie.Store;
   skypeToken: SkypeToken;
   registrationToken: RegistrationToken;
+  proxy?: string;
+  ackId?: number;
+  etag?: string;
 }
 
 export namespace Context {
@@ -105,29 +149,37 @@ export namespace Context {
    */
   export interface Json {
     username: string;
-    cookies: Object;
+    cookies: toughCookie.CookieJar.Serialized;
     skypeToken: SkypeToken.Json;
     registrationToken: RegistrationToken.Json;
+    ackId?: number;
+    etag?: string;
   }
 
-  export function toJson(context: Context): Context.Json {
+  export function toJson(context: Context): Json {
     return {
       username: context.username,
-      cookies: new CookieJar(context.cookies).serializeSync(),
+      cookies: new toughCookie.CookieJar(context.cookies).serializeSync(),
       skypeToken: SkypeToken.toJson(context.skypeToken),
       registrationToken: RegistrationToken.toJson(context.registrationToken),
+      ackId: context.ackId,
+      etag: context.etag,
     };
   }
 
-  export function fromJson(context: Context.Json): Context {
-    const cookies: MemoryCookieStore = new MemoryCookieStore();
-    CookieJar.deserializeSync(context.cookies, cookies);
+  export function fromJson(context: Json): Context {
+    const cookies: toughCookie.MemoryCookieStore = new toughCookie.MemoryCookieStore();
+    // TODO: Send a PR to DefinitelyTyped to fix this
+    type DeserializeSync = (cookies: toughCookie.CookieJar.Serialized, store: toughCookie.Store) => void;
+    (toughCookie.CookieJar.deserializeSync as DeserializeSync)(context.cookies, cookies);
 
     return {
       username: context.username,
       cookies,
       skypeToken: SkypeToken.fromJson(context.skypeToken),
       registrationToken: RegistrationToken.fromJson(context.registrationToken),
+      ackId: context.ackId,
+      etag: context.etag,
     };
   }
 }

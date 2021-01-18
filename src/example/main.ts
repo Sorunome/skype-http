@@ -1,43 +1,43 @@
-import * as fs from "fs";
-import * as sysPath from "path";
-import {createInterface, ReadLine} from "readline";
-import {Api as SkypeApi} from "../lib/api";
-import {VIRTUAL_CONTACTS} from "../lib/api/get-contact";
-import * as skypeHttp from "../lib/connect";
-import {Credentials} from "../lib/interfaces/api/api";
-import {Contact} from "../lib/interfaces/api/contact";
-import {Context} from "../lib/interfaces/api/context";
-import * as events from "../lib/interfaces/api/events";
-import * as resources from "../lib/interfaces/api/resources";
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { Api as SkypeApi } from '../lib/api';
+import * as skypeHttp from '../lib/connect';
+import { Credentials } from '../lib/interfaces/api/api';
+import { Context } from '../lib/interfaces/api/context';
+import * as events from '../lib/interfaces/api/events';
+import * as resources from '../lib/interfaces/api/resources';
+import { Contact } from '../lib/types/contact';
+import meta from './meta.js';
 
 /**
  * Command line interface prompt for the user credentials
  */
 async function promptCredentials(): Promise<Credentials> {
-  const cliInterface: ReadLine = createInterface({
+  const cliInterface: readline.ReadLine = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
   const username: string = await new Promise<string>(
     (resolve: (res: string) => void, reject: (err: any) => void): void => {
-      cliInterface.question("Username? ", resolve);
+      cliInterface.question('Username? ', resolve);
     },
   );
 
   const password: string = await new Promise<string>(
     (resolve: (res: string) => void, reject: (err: any) => void): void => {
-      cliInterface.question("Password? ", resolve);
+      cliInterface.question('Password? ', resolve);
     },
   );
 
   const result: Promise<Credentials> = new Promise(
     (resolve: (res: Credentials) => void, reject: (err: Error) => void): void => {
-      cliInterface.once("error", (err: Error): void => {
+      cliInterface.once('error', (err: Error): void => {
         reject(err);
       });
-      cliInterface.once("close", (): void => {
-        resolve({username, password});
+      cliInterface.once('close', (): void => {
+        resolve({ username, password });
       });
     },
   );
@@ -46,33 +46,33 @@ async function promptCredentials(): Promise<Credentials> {
   return result;
 }
 
-async function run(): Promise<void> {
-  const statePath: string = sysPath.resolve(__dirname, "api-state.json");
+async function runExample(): Promise<void> {
+  const statePath: string = path.resolve(meta.dirname, 'api-state.json');
   let api: SkypeApi;
   try {
-    const stateContent: string = fs.readFileSync(statePath).toString("utf8");
+    const stateContent: string = fs.readFileSync(statePath).toString('utf8');
     const apiContext: Context.Json = JSON.parse(stateContent);
-    api = await skypeHttp.connect({state: apiContext, verbose: true});
+    api = await skypeHttp.connect({ state: apiContext, verbose: true });
     await api.getContacts(); // Try a request, to check that the state is correctly restored.
     console.log(`Restored state from ${statePath}`);
   } catch (err) {
-    console.log("Unable to restore the state from file, performing login with credentials");
+    console.log('Unable to restore the state from file, performing login with credentials');
     const credentials: Credentials = await promptCredentials();
-    api = await skypeHttp.connect({credentials: credentials, verbose: true});
+    api = await skypeHttp.connect({ credentials, verbose: true });
   }
 
   const apiState: Context.Json = api.getState();
-  fs.writeFileSync(statePath, JSON.stringify(apiState), "utf8");
+  fs.writeFileSync(statePath, JSON.stringify(apiState), 'utf8');
   console.log(`Saved state in the file: ${statePath}`);
 
   // Log every event
-  api.on("event", (ev: events.EventMessage) => {
+  api.on('event', (ev: events.EventMessage) => {
     console.log(JSON.stringify(ev, null, 2));
   });
 
   // Log every error
-  api.on("error", (err: Error) => {
-    console.error("An error was detected:");
+  api.on('error', (err: Error) => {
+    console.error('An error was detected:');
     console.error(err);
   });
 
@@ -82,42 +82,49 @@ async function run(): Promise<void> {
       return;
     }
 
-    console.log("Received text:");
+    console.log('Received text:');
     console.log(resource.content);
-    const response: string = `Hi! You said "${resource.content}". skype-http works!`;
+    const response = `Hi! You said "${resource.content}". skype-http works!`;
     console.log(`Responding to conversation ${resource.conversation}`);
     console.log(response);
-    api.sendMessage({textContent: response}, resource.conversation)
-      .catch(console.error);
+    api.sendMessage({ textContent: response }, resource.conversation).catch(console.error);
   };
 
-  api.on("Text", onMessage);
-  api.on("RichText", onMessage);
+  api.on('Text', onMessage);
+  api.on('RichText', onMessage);
 
   const contacts: Contact[] = await api.getContacts();
-  console.log("Your contacts:");
+  console.log('Your contacts:');
   console.log(JSON.stringify(contacts, null, 2));
 
-  await Promise.all(contacts.map(async function (contact: Contact) {
-    try {
-      if (VIRTUAL_CONTACTS.has(contact.id.id)) {
-        return;
-      }
-      const fullContact: Contact = await api.getContact(contact.id.id);
-      console.log(JSON.stringify(fullContact, null, 2));
-    } catch (err) {
-      console.warn(err);
-    }
-  }));
-
-  console.log("Starting polling:");
+  console.log('Starting polling:');
   await api.listen();
-  await api.setStatus("Online");
-  console.log("Ready");
+  await api.setStatus('Online');
+  console.log('Ready');
+
+  // Check if the Skype Bot, and Skype Echo are already added as contacts
+  console.log('Adding Skype bot as contact');
+  const skypeTranslatorBot = '0d5d6cff-595d-49d7-9cf8-973173f5233b';
+  const addBot: boolean = await api.addBotToContact(skypeTranslatorBot);
+  if (addBot) {
+    console.log('Removing Skype bot from contacts');
+    await api.removeBotFromContacts(skypeTranslatorBot);
+  }
+
+  console.log('Adding Skype Echo as contact');
+  const echoSoundTest = '8:echo123';
+  const wasContactAdded: boolean = await api.addUserAsContact(echoSoundTest);
+  if (wasContactAdded) {
+    console.log('Removing Skype Echo from contacts');
+    await api.removeUserFromContacts(echoSoundTest);
+  }
+
+  console.log('Searching Skype directory');
+  const searchResults: string = await api.searchSkypeDirectory('testing');
+  console.log(searchResults);
 }
 
-run()
-  .catch((err: Error): never => {
-    console.error(err.stack);
-    return process.exit(1) as never;
-  });
+runExample().catch((err: Error): never => {
+  console.error(err.stack);
+  return process.exit(1) as never;
+});

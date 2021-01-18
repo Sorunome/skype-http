@@ -1,8 +1,38 @@
-# Next
+# 0.0.15 (2018-02-14)
+
+- **[Feature]** Add `setConversationTopic(conversationId: string, topic: string)`
+- **[Feature]** Add `getJoinUrl(conversationId: string)`
+- **[Feature]** Add `addMemberToConversation(conversationId: string, memberId: string)`
+- **[Feature]** Add `createConversation(allUsers: AllUsers)`
+- **[Fix]** Do not throw on unexpected extra keys when reading responses.
+- **[Fix]** Fix message host resolution (API change).
+- **[Fix]** Mark `isFavorite` in `ContactGroup` as optional.
+- **[Fix]** Mark `name` in `ContactProfile` as optional.
+- **[Fix]** Move `.ts` sources to a different directory than `.d.ts` and `.js` in dist build
+- **[Internal]** Run tests and coverage on `.mjs` files.
+
+# 0.0.14 (2018-01-12)
+
+- **[Breaking change]** Use contacts API v2: the new types are in `lib/types`, the old types
+    remain in `lib/interfaces`. The main difference is that the MRI key (`8:user_id`) is no longer
+    parsed and most of the contact details are now in a `Profile` object.
+    It is no longer possible to get a single contact.
+- **[Feature]** Expose detailed errors for endpoint registration.
+- **[Feature]** Support ES modules (ESM)
+- **[Fix]** Add support email login (#58)
+- **[Internal]** Update project tools to [turbo-gulp](https://www.npmjs.com/package/turbo-gulp)
+- **[Internal]** Enable integration with Codecov
+- **[Internal]** Enable integration with Greenkeeper
+- **[Internal]** Use runtime representation of the types with Kryo
+
+# 0.0.13 (2017-07-16)
 
 - **[Breaking]** Allow `Contact.name.first` and `Contact.surname.first` to be null. This matches the Skype
   API.
+- **[Feature]** Send images with the new `sendImage` method
+- **[Feature]** Add support for state serialization. This allows you to export the state and then restore it.
 - **[Internal]** Add background information about the project and update the commands available to contributors.
+- **[Internal]** Add TypeDoc generation.
 
 # 0.0.12 (2017-05-10)
 

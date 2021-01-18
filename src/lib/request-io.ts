@@ -1,5 +1,9 @@
-import request = require("request");
-import * as io from "./interfaces/http-io";
+import got from 'got';
+import { OptionsOfDefaultResponseBody } from 'got/dist/source/create';
+import { Response } from 'got/dist/source/types';
+import toughCookie from 'tough-cookie';
+import tunnel from 'tunnel';
+import * as io from './interfaces/http-io';
 
 /**
  * Converts implementation-independant IO options to the concrete
@@ -8,13 +12,38 @@ import * as io from "./interfaces/http-io";
  * @param ioOptions Implementation independent IO options
  * @returns {request.Options} Corresponding `request` options
  */
-function asRequestOptions (ioOptions: io.GetOptions | io.PostOptions | io.PutOptions): request.Options {
-  const result: request.Options = {...ioOptions};
+function asRequestOptions(
+  ioOptions: io.GetOptions | io.PostOptions | io.PutOptions | io.DeleteOptions,
+): OptionsOfDefaultResponseBody {
+  const result: OptionsOfDefaultResponseBody = { ...(<any>ioOptions) };
   if (ioOptions.queryString !== undefined) {
-    result.qs = ioOptions.queryString;
+    delete (result as any).queryString;
+    result.searchParams = ioOptions.queryString;
   }
   if (ioOptions.cookies !== undefined) {
-    result.jar = request.jar(ioOptions.cookies);
+    delete (result as any).cookies;
+    const cookieJar: toughCookie.CookieJar = new toughCookie.CookieJar(ioOptions.cookies);
+
+    result.cookieJar = {
+      setCookie: async (rawCookie: string, url: string) =>
+        new Promise((resolve, reject) =>
+          cookieJar.setCookie(rawCookie, url, (err, value) => (err ? reject(err) : resolve(value))),
+        ),
+      getCookieString: async (url: string) =>
+        new Promise((resolve, reject) =>
+          cookieJar.getCookieString(url, (err, value) => (err ? reject(err) : resolve(value))),
+        ),
+    };
+  }
+  if (ioOptions.proxy !== undefined) {
+    delete (result as any).proxy;
+    const parts: string[] = ioOptions.proxy.split(':');
+    result.agent = tunnel.httpOverHttp({
+      proxy: {
+        host: parts[0],
+        port: Number(parts[1]),
+      },
+    });
   }
   return result;
 }
@@ -24,25 +53,22 @@ function asRequestOptions (ioOptions: io.GetOptions | io.PostOptions | io.PutOpt
  *
  * @param options
  */
-export function get (options: io.GetOptions): Promise<io.Response> {
-  return new Promise((resolve, reject) => {
-    request.get(asRequestOptions(options), (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      if (response.statusCode === undefined) {
-        return reject(new Error("Missing status code"));
-      }
-
-      const ioResponse: io.Response = {
-        statusCode: response.statusCode,
-        body: body,
-        headers: response.headers,
-      };
-
-      resolve(ioResponse);
-    });
-  });
+export async function get(options: io.GetOptions): Promise<io.Response> {
+  try {
+    const params: OptionsOfDefaultResponseBody = asRequestOptions(options);
+    params.method = 'GET';
+    const ret: Response<string> = await got(params);
+    if (ret.statusCode === undefined) {
+      throw new Error('Missing status code');
+    }
+    return {
+      body: ret.body,
+      headers: ret.headers,
+      statusCode: ret.statusCode,
+    };
+  } catch (err) {
+    throw err.response || err;
+  }
 }
 
 /**
@@ -50,25 +76,22 @@ export function get (options: io.GetOptions): Promise<io.Response> {
  *
  * @param options
  */
-export function post (options: io.PostOptions): Promise<io.Response> {
-  return new Promise((resolve, reject) => {
-    request.post(asRequestOptions(options), (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      if (response.statusCode === undefined) {
-        return reject(new Error("Missing status code"));
-      }
-
-      const ioResponse: io.Response = {
-        statusCode: response.statusCode,
-        body: body,
-        headers: response.headers,
-      };
-
-      resolve(ioResponse);
-    });
-  });
+export async function post(options: io.PostOptions): Promise<io.Response> {
+  try {
+    const params: OptionsOfDefaultResponseBody = asRequestOptions(options);
+    params.method = 'POST';
+    const ret: Response<string> = await got(params);
+    if (ret.statusCode === undefined) {
+      throw new Error('Missing status code');
+    }
+    return {
+      body: ret.body,
+      headers: ret.headers,
+      statusCode: ret.statusCode,
+    };
+  } catch (err) {
+    throw err.response || err;
+  }
 }
 
 /**
@@ -76,31 +99,50 @@ export function post (options: io.PostOptions): Promise<io.Response> {
  *
  * @param options
  */
-export function put (options: io.PutOptions): Promise<io.Response> {
-  return new Promise((resolve, reject) => {
-    request.put(asRequestOptions(options), (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      if (response.statusCode === undefined) {
-        return reject(new Error("Missing status code"));
-      }
+export async function put(options: io.PutOptions): Promise<io.Response> {
+  try {
+    const params: OptionsOfDefaultResponseBody = asRequestOptions(options);
+    params.method = 'PUT';
+    const ret: Response<string> = await got(params);
+    if (ret.statusCode === undefined) {
+      throw new Error('Missing status code');
+    }
+    return {
+      body: ret.body,
+      headers: ret.headers,
+      statusCode: ret.statusCode,
+    };
+  } catch (err) {
+    throw err.response || err;
+  }
+}
 
-      const ioResponse: io.Response = {
-        statusCode: response.statusCode,
-        body: body,
-        headers: response.headers,
-      };
-
-      resolve(ioResponse);
-    });
-  });
+/**
+ * Send a DELETE request
+ *
+ * @param options
+ */
+export async function del(options: io.DeleteOptions): Promise<io.Response> {
+  try {
+    const params: OptionsOfDefaultResponseBody = asRequestOptions(options);
+    params.method = 'DELETE';
+    const ret: Response<string> = await got(params);
+    if (ret.statusCode === undefined) {
+      throw new Error('Missing status code');
+    }
+    return {
+      body: ret.body,
+      headers: ret.headers,
+      statusCode: ret.statusCode,
+    };
+  } catch (err) {
+    throw err.response || err;
+  }
 }
 
 export const requestIo: io.HttpIo = {
-  get: get,
-  post: post,
-  put: put,
+  get,
+  post,
+  put,
+  del,
 };
-
-export default requestIo;

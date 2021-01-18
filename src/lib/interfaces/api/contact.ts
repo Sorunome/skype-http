@@ -1,10 +1,5 @@
-import {Nullable} from "../utils";
-import {FullId} from "./api";
-
-export interface Location {
-  country: string; // almost certainly an enum...
-  city?: string;
-}
+import { Location } from '../../types/location';
+import { FullId } from './api';
 
 export interface Phone {
   number: string; // pattern: /^+\d+$/  (with country code)
@@ -12,15 +7,17 @@ export interface Phone {
 }
 
 export interface Contact {
+  // TODO: Use MriKey
   id: FullId;
+  workloads: 'skype' | string | null; // probably enum
   avatarUrl: string | null;
   phones: Phone[];
-  emails?: String[];
+  emails?: string[];
   name: {
     first: string | null;
     surname: string | null;
-  nickname: string;
-  displayName: string;
+    nickname: string;
+    displayName: string;
   };
   activityMessage: string | null;
   locations: Location[];
@@ -29,19 +26,19 @@ export interface Contact {
 export interface Profile {
   fistname: string;
   lastname: string;
-  birthday: Nullable<any>;
-  language: "en" | string; // enum ?
-  country: "us" | string; // enum ?
-  province: Nullable<any>;
-  city: Nullable<any>;
-  homepage: Nullable<any>;
-  about: Nullable<any>;
+  birthday: any | null;
+  language: 'en' | string; // enum ?
+  country: 'us' | string; // enum ?
+  province: any | null;
+  city: any | null;
+  homepage: any | null;
+  about: any | null;
   emails: any[];
-  phoneMobile: Nullable<any>;
-  phoneHome: Nullable<any>;
-  phoneOffice: Nullable<any>;
-  mood: Nullable<any>;
-  richMood: Nullable<any>;
-  avatarUrl: Nullable<any>;
+  phoneMobile: any | null;
+  phoneHome: any | null;
+  phoneOffice: any | null;
+  mood: any | null;
+  richMood: any | null;
+  avatarUrl: any | null;
   username: string;
 }

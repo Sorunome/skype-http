@@ -1,16 +1,14 @@
-import {Store as CookieStore} from "tough-cookie";
-import {Dictionary} from "./utils";
-
+import { Store as CookieStore } from 'tough-cookie';
 export interface BaseOptions {
-  uri: string;
+  url: string;
   cookies?: CookieStore;
-  headers?: Dictionary<any>;
-  queryString?: Dictionary<any>;
+  headers?: any; // {[name: string]: string};
+  queryString?: any; // {[key: string]: string};
+  proxy?: string;
+  throwHttpErrors?: boolean;
 }
 
-export interface GetOptions extends BaseOptions {
-
-}
+export type GetOptions = BaseOptions;
 
 export interface PostOptions extends BaseOptions {
   form?: any;
@@ -19,14 +17,20 @@ export interface PostOptions extends BaseOptions {
 
 export type PutOptions = PostOptions;
 
+export type DeleteOptions = PostOptions;
+
 export interface Response {
   statusCode: number;
   body: string;
-  headers: Dictionary<any>;
+  headers: any; // {[name: string]: string};
 }
 
 export interface HttpIo {
-  get (options: GetOptions): PromiseLike<Response>;
-  post (options: PostOptions): PromiseLike<Response>;
-  put (options: PutOptions): PromiseLike<Response>;
+  get(options: GetOptions): Promise<Response>;
+
+  post(options: PostOptions): Promise<Response>;
+
+  put(options: PutOptions): Promise<Response>;
+
+  del(options: DeleteOptions): Promise<Response>;
 }

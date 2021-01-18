@@ -1,15 +1,12 @@
-import {Incident} from "incident";
-import {Context} from "../interfaces/api/context";
-import {Conversation} from "../interfaces/api/conversation";
-import * as io from "../interfaces/http-io";
-import {
-  Conversation as NativeConversation,
-  Thread as NativeThread,
-} from "../interfaces/native-api/conversation";
-import * as messagesUri from "../messages-uri";
-import {formatConversation, formatThread} from "../utils/formatters";
+import { Incident } from 'incident';
+import { Context } from '../interfaces/api/context';
+import { Conversation } from '../interfaces/api/conversation';
+import * as io from '../interfaces/http-io';
+import { Conversation as NativeConversation, Thread as NativeThread } from '../interfaces/native-api/conversation';
+import * as messagesUri from '../messages-uri';
+import { formatConversation, formatThread } from '../utils/formatters';
 
-interface ConversationBody {
+export interface ConversationBody {
   conversations: NativeConversation[];
   _metadata: {
     totalCount: number;
@@ -20,8 +17,8 @@ interface ConversationBody {
 }
 
 interface GetConversationQuery {
-  startTime: number; // a timestamp ?
-  view: "msnp24Equivalent" | string;
+  startTime: string; // a timestamp ?
+  view: 'msnp24Equivalent' | string;
   targetType: string; // seen: Passport|Skype|Lync|Thread
 }
 
@@ -31,40 +28,41 @@ export async function getConversation(
   conversationId: string,
 ): Promise<Conversation> {
   const query: GetConversationQuery = {
-    startTime: 0,
-    view: "msnp24Equivalent",
-    targetType: "Passport|Skype|Lync|Thread",
+    startTime: '0',
+    view: 'msnp24Equivalent',
+    targetType: 'Passport|Skype|Lync|Thread',
   };
 
-  let uri: string;
-  if (conversationId.indexOf("19:") === 0) { // group discussion
-    uri = messagesUri.thread(apiContext.registrationToken.host, conversationId);
-  } else { // 8: private conversation
-    uri = messagesUri.conversation(apiContext.registrationToken.host, messagesUri.DEFAULT_USER, conversationId);
+  let url: string;
+  if (conversationId.indexOf('19:') === 0) {
+    // group discussion
+    url = messagesUri.thread(apiContext.registrationToken.host, conversationId);
+  } else {
+    // 8: private conversation
+    url = messagesUri.conversation(apiContext.registrationToken.host, messagesUri.DEFAULT_USER, conversationId);
   }
 
   const requestOptions: io.GetOptions = {
-    uri: uri,
+    url,
     cookies: apiContext.cookies,
     queryString: query,
     headers: {
       RegistrationToken: apiContext.registrationToken.raw,
     },
+    proxy: apiContext.proxy,
   };
   const res: io.Response = await io.get(requestOptions);
 
   if (res.statusCode !== 200) {
-    return Promise.reject(new Incident("net", "Unable to fetch conversation"));
+    return Promise.reject(new Incident('net', 'Unable to fetch conversation'));
   }
   const body: NativeConversation | NativeThread = JSON.parse(res.body);
 
-  if (body.type === "Thread") {
-    return formatThread(<NativeThread> body);
-  } else if (body.type === "Conversation") {
-    return formatConversation(<NativeConversation> body);
+  if (body.type === 'Thread') {
+    return formatThread(<NativeThread>body);
+  } else if (body.type === 'Conversation') {
+    return formatConversation(<NativeConversation>body);
   } else {
-    return Promise.reject(new Incident("unknonwn-type", "Unknown type for conversation..."));
+    return Promise.reject(new Incident('unknonwn-type', 'Unknown type for conversation...'));
   }
 }
-
-export default getConversation;

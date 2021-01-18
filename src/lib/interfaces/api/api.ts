@@ -1,4 +1,4 @@
-export type Status = "Hidden" | "Online" | "Away" | "Busy";
+export type Status = 'Hidden' | 'Online' | 'Away' | 'Busy';
 
 export interface Credentials {
   username: string;
@@ -26,8 +26,14 @@ export interface NewMessage {
   textContent: string;
 }
 
-export interface NewImage {
-  file: string;
+export interface NewMediaMessage {
+  file: string | Buffer;
+  name: string;
+  width?: number;
+  height?: number;
+}
+export interface NewDocument {
+  file: string | Buffer;
   name: string;
 }
 
