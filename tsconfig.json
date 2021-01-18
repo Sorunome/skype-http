@@ -20,8 +20,7 @@
     "inlineSources": false,
     "isolatedModules": false,
     "lib": [
-      "es2017",
-      "esnext.asynciterable"
+      "es2018"
     ],
     "locale": "en-us",
     "module": "commonjs",

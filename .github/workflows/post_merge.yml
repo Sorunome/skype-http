@@ -1,0 +1,84 @@
+name: Post merge check
+on:
+  push:
+    branches: [master]
+jobs:
+  install_dependencies:
+    name: Install node dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: npm i
+  test_check:
+    name: Tests check
+    runs-on: ubuntu-latest
+    needs: install_dependencies
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm i
+      - run: npm run test:coverage
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: coverage
+  publish:
+    name: Publish library to npm
+    runs-on: ubuntu-latest
+    needs: test_check
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm i
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  # quality_check_api:
+  #   name: SonarCloud check API application
+  #   runs-on: ubuntu-latest
+  #   needs: test_check
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+  #     - name: Download code coverage results
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: code-coverage-report
+  #         path: coverage
+  #     - name: SonarCloud Scan
+  #       uses: SonarSource/sonarcloud-github-action@master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_API }}
+  #       with:
+  #         args: >
+  #           -Dsonar.organization=englisht2east
+  #           -Dsonar.projectKey=ette-api
+  #           -Dsonar.javascript.lcov.reportPaths=coverage/apps/api/lcov.info
+  #           -Dsonar.sources=apps/api/src
+  #           -Dsonar.test.inclusions=apps/api/src/**/*.spec.ts
+  #           -Dsonar.typescript.tsconfigPath=apps/api/tsconfig.json
+  #           -Dsonar.typescript.exclusions=**/node_modules/**,apps/**/src/*.ts,apps/api/src/**/*.spec.ts
+

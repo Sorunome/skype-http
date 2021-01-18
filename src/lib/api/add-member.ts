@@ -11,11 +11,11 @@ export async function addMemberToConversation(
   io: io.HttpIo,
   apiContext: Context,
   memberId: string,
-  converstionId: string,
+  conversationId: string,
   role = 'User',
 ): Promise<void> {
   // `https://{host}}/v1/threads/${converstionId}/members/${memberId}`,
-  const url: string = messagesUri.member(apiContext.registrationToken.host, converstionId, memberId);
+  const url: string = messagesUri.member(apiContext.registrationToken.host, conversationId, memberId);
 
   const requestBody: RequestBody = { role };
   const requestOptions: io.PutOptions = {

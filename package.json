@@ -1,7 +1,7 @@
 {
   "name": "@sergiov85/skype-http",
   "description": "Unofficial Skype API for Node.js via HTTP. Forked from ocilo/skype-http and Sorunome/skype-http",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist/lib/index",
   "types": "dist/lib/index.d.ts",
@@ -17,8 +17,8 @@
     "prepare": "npm run build",
     "prettier": "prettier --config .prettierrc --list-different \"./src/lib/**/*.{ts,json}\"",
     "prettier:autofix": "prettier --config .prettierrc --list-different \"./src/lib/**/*.{ts,json}\" --write",
-    "test": "cross-env TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT='./src/test/tsconfig.json' mocha --config ./.mocharc.js",
-    "test:watch": "cross-env TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT='./src/test/tsconfig.json' mocha --config ./.mocharc.js --watch",
+    "test": "cross-env TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT='./src/test/tsconfig.spec.json' mocha --config ./.mocharc.js",
+    "test:watch": "cross-env TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT='./src/test/tsconfig.spec.json' mocha --config ./.mocharc.js --watch",
     "test:coverage": "nyc npm run test",
     "start:old": "node --experimental-modules build/example/example/main.js",
     "prepare:old": "gulp all:tsconfig.json && gulp tslint.json && gulp dist",
@@ -75,6 +75,7 @@
     "glob": "^7.1.3",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
+    "husky": "^4.3.8",
     "minimist": "^1.2.5",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0",
@@ -85,22 +86,6 @@
     "turbo-gulp": "^0.22.1",
     "typescript": "^4.1.0"
   },
-  "nyc": {
-    "include": [
-      "build/test/lib/**/*.js",
-      "build/test/lib/**/*.mjs"
-    ],
-    "reporter": [
-      "text",
-      "html"
-    ],
-    "extension": [
-      ".mjs"
-    ]
-  },
-  "@std/esm": {
-    "esm": "cjs"
-  },
   "bugs": {
     "url": "https://github.com/SergioV85/skype-http/issues"
   },
@@ -108,5 +93,11 @@
   "author": "ocilo -> Sorunome -> SergioV85",
   "files": [
     "dist/lib/**/*"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier & npm run lint",
+      "pre-push": "npm run test"
+    }
+  }
 }

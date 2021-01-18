@@ -1,7 +1,7 @@
-import * as dotenv from 'dotenv';
+import { config } from 'dotenv';
 import { Credentials } from '../lib/interfaces/api/api';
 
-dotenv.config();
+config();
 
 export interface TestConfig {
   /**

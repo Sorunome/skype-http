@@ -140,26 +140,6 @@ function buildObjectView(objectId: string, view: string) {
   return buildObject(objectId).concat('view').concat(view);
 }
 
-// /v1/objects
-function buildObjects(): string[] {
-  return buildV1().concat("objects");
-}
-
-// /v1/objects/{objectId}
-function buildObject(objectId: string) {
-  return buildObjects().concat(objectId);
-}
-
-// /v1/objects/{objectId}/content/{content}
-function buildObjectContent(objectId: string, content: string) {
-  return buildObject(objectId).concat("content").concat(content);
-}
-
-// /v1/objects/{objectId}/view/{content}
-function buildObjectView(objectId: string, view: string) {
-  return buildObject(objectId).concat("view").concat(view);
-}
-
 /**
  * Returns an URI origin like: "https://host.com"
  * If host is `null`, returns an empty string

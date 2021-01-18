@@ -124,8 +124,12 @@ export class Api extends events.EventEmitter implements ApiEvents {
     return getJoinUrl(this.io, this.context, conversationId);
   }
 
-  async addMemberToConversation(conversationId: string, memberId: string): Promise<void> {
-    return addMemberToConversation(this.io, this.context, conversationId, memberId);
+  async addMemberToConversation(
+    memberId: string,
+    conversationId: string,
+    role: 'Admin' | 'User' = 'User',
+  ): Promise<void> {
+    return addMemberToConversation(this.io, this.context, memberId, conversationId, role);
   }
 
   async createConversation(allUsers: AllUsers): Promise<any> {

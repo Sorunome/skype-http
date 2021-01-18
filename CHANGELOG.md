@@ -1,3 +1,6 @@
+# 1.0.1 (2021-01-18)
+- **[Fix]** Change attribute order of `addMemberToConversation` method to `(memberId: string, conversationId: string, role: 'Admin' | 'User])`
+
 # 0.0.15 (2018-02-14)
 
 - **[Feature]** Add `setConversationTopic(conversationId: string, topic: string)`

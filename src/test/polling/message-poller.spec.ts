@@ -9,7 +9,7 @@ import {
   parseContactId,
 } from '../../lib/polling/messages-poller';
 
-describe('formatControlClearTypingResource', function () {
+describe('formatControlClearTypingResource', () => {
   interface Item {
     nativeResource: nativeMessageResources.ControlClearTyping;
     expectedFormattedResource: resources.ControlClearTypingResource;

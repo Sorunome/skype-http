@@ -3,7 +3,7 @@
   "all": true,
   "reporter": ["html", "text-summary"],
   "report-dir": "./coverage",
-  "include": ["src/lib/**/*.ts"],
+  "include": ["src/lib/**/*.ts", "src/test/**/*.spec.ts"],
   "exclude": ["src/custom-typings/*.*", "src/example/*.*"],
   "recursive": "true",
   "require": ["ts-node/register", "source-map-support/register"],
