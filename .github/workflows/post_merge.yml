@@ -35,6 +35,9 @@ jobs:
           node-version: 12.x
       - run: npm i
       - run: npm run test:coverage
+        env:
+          SKYPE_USERNAME: ${{ secrets.SKYPE_ACCOUNT }}
+          SKYPE_PASSWORD: ${{ secrets.SKYPE_PASSWORD }}
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2
         with:
