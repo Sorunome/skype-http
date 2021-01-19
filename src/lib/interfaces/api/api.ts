@@ -3,6 +3,7 @@ export type Status = 'Hidden' | 'Online' | 'Away' | 'Busy';
 export interface Credentials {
   username: string;
   password: string;
+  liveId?: string;
 }
 
 export interface ParsedConversationId {

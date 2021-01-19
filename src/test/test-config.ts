@@ -22,12 +22,14 @@ const verbose: boolean = process.env['OCILO_TEST_VERBOSE'] === 'true';
 const credentials: Credentials = {
   username: process.env.SKYPE_USERNAME || '',
   password: process.env.SKYPE_PASSWORD || '',
+  liveId: process.env.SKYPE_ID || '',
 };
 
 const secondaryAccounts: Credentials[] = [
   {
     username: process.env.SKYPE_USERNAME || '',
     password: process.env.SKYPE_PASSWORD || '',
+    liveId: process.env.SKYPE_ID || '',
   },
 ];
 

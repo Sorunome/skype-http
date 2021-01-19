@@ -1,7 +1,7 @@
 {
   "name": "@sergiov85/skype-http",
   "description": "Unofficial Skype API for Node.js via HTTP. Forked from ocilo/skype-http and Sorunome/skype-http",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "main": "dist/lib/index",
   "types": "dist/lib/index.d.ts",

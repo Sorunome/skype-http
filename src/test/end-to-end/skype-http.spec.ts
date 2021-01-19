@@ -11,6 +11,6 @@ describe('SkypeHttp', function () {
 
   it('should connect to the main account through authentication', async function () {
     const api: Api = await SkypeHttp.connect({ credentials: mainAccount, verbose: testConfig.verbose });
-    assert.equal(api.context.username, mainAccount.username);
+    assert.equal(api.context.username, mainAccount.liveId);
   });
 });
