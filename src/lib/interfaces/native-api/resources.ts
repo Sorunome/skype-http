@@ -24,23 +24,24 @@ export interface CustomUserPropertiesResource extends Resource {
   native?: any;
 }
 
+export type MessageType =
+  | 'Control/LiveState'
+  | 'Control/ClearTyping'
+  | 'Control/Typing'
+  | 'Event/Call'
+  | 'RichText'
+  | 'RichText/UriObject'
+  | 'RichText/Location'
+  | 'RichText/Media_GenericFile'
+  | 'RichText/Media_Video'
+  | 'Signal/Flamingo'
+  | 'Text'
+  | 'RichText/Media_AudioMsg'
+  | 'ThreadActivity/MemberConsumptionHorizonUpdate';
+
 export interface MessageResource extends Resource {
   type: 'Message';
-  messagetype:
-    | 'Control/LiveState'
-    | 'Control/ClearTyping'
-    | 'Control/Typing'
-    | 'Event/Call'
-    | 'RichText'
-    | 'RichText/UriObject'
-    | 'RichText/Location'
-    | 'RichText/Media_GenericFile'
-    | 'RichText/Media_Video'
-    | 'Signal/Flamingo'
-    | 'Text'
-    | 'RichText/Media_AudioMsg'
-    | 'ThreadActivity/MemberConsumptionHorizonUpdate'
-    | string; // TODO
+  messagetype: MessageType | string; // TODO
   ackrequired: string;
   // JSON date
   originalarrivaltime: string;

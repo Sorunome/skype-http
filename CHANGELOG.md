@@ -1,3 +1,7 @@
+# 1.1.0 (2021-01-19)
+- **[Feature]** Restore functionality of `getMessages(conversationId: string)`
+
+
 # 1.0.1 (2021-01-18)
 - **[Fix]** Change attribute order of `addMemberToConversation` method to `(memberId: string, conversationId: string, role: 'Admin' | 'User])`
 

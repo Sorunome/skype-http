@@ -7,7 +7,7 @@ import {
   formatControlTypingResource,
   formatGenericMessageResource,
   parseContactId,
-} from '../../lib/polling/messages-poller';
+} from '../../lib/utils/formatters';
 
 describe('formatControlClearTypingResource', () => {
   interface Item {

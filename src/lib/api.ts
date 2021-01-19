@@ -9,6 +9,7 @@ import { getContact } from './api/get-contact';
 import { getConversation } from './api/get-conversation';
 import { getConversations } from './api/get-conversations';
 import { getJoinUrl } from './api/get-join-url';
+import { getMessages } from './api/get-messages';
 import { searchSkypeDirectory } from './api/search-directory';
 import { sendAudio } from './api/send-audio';
 import { sendDelete } from './api/send-delete';
@@ -19,11 +20,8 @@ import { sendMessage } from './api/send-message';
 import { setConversationTopic } from './api/set-conversation-topic';
 import { setStatus } from './api/set-status';
 import { ContactsInterface, ContactsService } from './contacts/contacts';
+import { Contact as _Contact, Context as ApiContext, Resource, Conversation, EventMessage } from './interfaces/api';
 import * as api from './interfaces/api/api';
-import { Contact as _Contact } from './interfaces/api/contact';
-import { Context as ApiContext } from './interfaces/api/context';
-import { Conversation } from './interfaces/api/conversation';
-import * as apiEvents from './interfaces/api/events';
 import { HttpIo } from './interfaces/http-io';
 import { AllUsers } from './interfaces/native-api/conversation';
 import { MessagesPoller } from './polling/messages-poller';
@@ -46,7 +44,7 @@ export class Api extends events.EventEmitter implements ApiEvents {
     this.messagesPoller = new MessagesPoller(this.io, this.context);
     this.messagesPoller.on('error', (err: Error) => this.emit('error', err));
     // tslint:disable-next-line:no-void-expression
-    this.messagesPoller.on('event-message', (ev: apiEvents.EventMessage) => this.handlePollingEvent(ev));
+    this.messagesPoller.on('event-message', (ev: EventMessage) => this.handlePollingEvent(ev));
     this.contactsService = new ContactsService(this.io);
   }
 
@@ -98,6 +96,10 @@ export class Api extends events.EventEmitter implements ApiEvents {
 
   async getConversations(): Promise<Conversation[]> {
     return getConversations(this.io, this.context);
+  }
+
+  async getMessages(conversationId: string): Promise<Resource[]> {
+    return getMessages(this.io, this.context, conversationId);
   }
 
   async sendMessage(message: api.NewMessage, conversationId: string): Promise<api.SendMessageResult> {
@@ -168,7 +170,7 @@ export class Api extends events.EventEmitter implements ApiEvents {
     return Promise.resolve(this);
   }
 
-  protected handlePollingEvent(ev: apiEvents.EventMessage): void {
+  protected handlePollingEvent(ev: EventMessage): void {
     this.emit('event', ev);
 
     if (ev.resource === null) {
