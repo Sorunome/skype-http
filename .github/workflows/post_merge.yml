@@ -55,7 +55,7 @@ jobs:
           node-version: 12.x
           registry-url: 'https://registry.npmjs.org'
       - run: npm i
-      - run: npm publish — access public
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   # quality_check_api:
