@@ -41,4 +41,10 @@ export namespace Conversation {
   export type ThreadProperties = conversation.ThreadProperties;
 }
 
+export type Resource = resources.Resource;
+
+export namespace Resource {
+  export type Resource = resources.Resource;
+}
+
 export { errors };
