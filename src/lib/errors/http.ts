@@ -106,6 +106,6 @@ export namespace RequestError {
     cause: Error,
     request: httpIo.GetOptions | httpIo.PostOptions | httpIo.PutOptions,
   ): RequestError {
-    return new Incident(cause, name, { request }, format);
+    return new Incident<Data, Name, Cause>(cause, name, { request }, format);
   }
 }

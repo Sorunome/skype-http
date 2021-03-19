@@ -129,7 +129,7 @@ export async function getLiveKeys(options: LoadLiveKeysOptions): Promise<LiveKey
       client_id: webClientLiveLoginId,
       redirect_uri: skypeWebUri,
     };
-    const getOptions: io.GetOptions = { url, queryString, cookies: options.cookies };
+    const getOptions: io.GetOptions = { url, queryString, cookies: options.cookies, gzip: false, decompress: false };
 
     let response: io.Response;
     try {
@@ -269,6 +269,8 @@ export async function requestLiveToken(options: GetLiveTokenOptions): Promise<io
     cookies: options.cookies,
     form: formData,
     proxy: options.proxy,
+    gzip: false,
+    decompress: false,
   };
 
   try {
@@ -291,10 +293,10 @@ export async function requestLiveToken(options: GetLiveTokenOptions): Promise<io
  * @return html to be used by scrapLiveToken
  */
 export async function checkIfUpsellIsPresentAndDismiss(html: string, options: GetLiveTokenOptions): Promise<string> {
-  let $: CheerioStatic = cheerio.load(html);
+  let $: cheerio.Root = cheerio.load(html);
   if (html.indexOf('app=Authenticator') > -1) {
     console.log('<<<<<<  Upsell Detected  >>>>>');
-    const url: string = $('form').attr('action').replace('\\"', '').replace('\\"', '');
+    const url: string = ($('form').attr('action') as string).replace('\\"', '').replace('\\"', '');
     const inputValues: any = $('input');
 
     // tslint:disable-next-line variable-name
@@ -374,9 +376,9 @@ export async function checkIfUpsellIsPresentAndDismiss(html: string, options: Ge
  */
 export function scrapLiveToken(html: string): string {
   // TODO(demurgos): Handle the possible failure of .load (invalid HTML)
-  const $: CheerioStatic = cheerio.load(html);
+  const $: cheerio.Root = cheerio.load(html);
 
-  const tokenNode: Cheerio = $('#t');
+  const tokenNode: cheerio.Cheerio = $('#t');
   const formSubmitUrl: string | undefined = $('form').attr('action');
 
   const tokenValue: string | undefined = tokenNode.val();
@@ -495,10 +497,10 @@ export interface SkypeTokenResponse {
  */
 export function scrapSkypeTokenResponse(html: string): SkypeTokenResponse {
   // TODO(demurgos): Handle .load errors (invalid HTML)
-  const $: CheerioStatic = cheerio.load(html);
-  const skypeTokenNode: Cheerio = $('input[name=skypetoken]');
+  const $: cheerio.Root = cheerio.load(html);
+  const skypeTokenNode: cheerio.Cheerio = $('input[name=skypetoken]');
   // In seconds
-  const expiresInNode: Cheerio = $('input[name=expires_in]');
+  const expiresInNode: cheerio.Cheerio = $('input[name=expires_in]');
 
   const skypeToken: string | undefined = skypeTokenNode.val();
   const expiresIn: number | undefined = parseInt(expiresInNode.val(), 10);

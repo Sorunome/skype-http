@@ -6,6 +6,8 @@ export interface BaseOptions {
   queryString?: any; // {[key: string]: string};
   proxy?: string;
   throwHttpErrors?: boolean;
+  decompress?: boolean;
+  gzip?: boolean;
 }
 
 export type GetOptions = BaseOptions;
