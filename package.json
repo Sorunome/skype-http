@@ -52,7 +52,7 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/chai": "^4.1.7",
-    "@types/cheerio": "^0.22.12",
+    "@types/cheerio": "^0.22.27",
     "@types/escape-html": "0.0.20",
     "@types/form-data": "^2.5.0",
     "@types/gulp": "^4.0.6",
