@@ -1,7 +1,7 @@
 # Skype-Http
 
-[![npm](https://img.shields.io/npm/v/@sergiov85/skype-http)](https://www.npmjs.com/package/@sergiov85/skype-http)
-[![GitHub repository](https://img.shields.io/badge/Github-SergioV85%2Fskype--http-blue.svg)](https://github.com/SergioV85/skype-http)
+[![npm](https://img.shields.io/npm/v/skype-http.svg?maxAge=2592000)](https://www.npmjs.com/package/skype-http)
+[![GitHub repository](https://img.shields.io/badge/Github-ocilo%2Fskype--http-blue.svg)](https://github.com/ocilo/skype-http)
 [![Snyk Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@sergiov85/skype-http)](https://snyk.io/)
 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
@@ -9,6 +9,9 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=code_smells)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=coverage)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
 
+[![Codecov](https://codecov.io/gh/ocilo/skype-http/branch/master/graph/badge.svg)](https://codecov.io/gh/ocilo/skype-http)
+[![Build status](https://img.shields.io/travis/ocilo/skype-http/master.svg?maxAge=2592000)](https://travis-ci.org/ocilo/skype-http)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ocilo/skype-http.svg)](https://greenkeeper.io/)
 
 Unofficial Skype API for Node.js via HTTP.
 This relies on the Skype Web Application and requires the credentials of the account you want to use: use it with care.
@@ -18,13 +21,18 @@ This relies on the Skype Web Application and requires the credentials of the acc
 - Stable version:
 
   ````shell
-  npm install --save @sergiov85/skype-http
+  npm install --save skype-http
   ````
 
+- Git master:
+
+  ```shell
+  npm install --save skype-http@next
+  ```
 
 Import for Typescript or Javascript ES6:
 ````typescript
-import { Api }  from "skype-http";
+import * as skypeHttp from "skype-http";
 ````
 
 Import for Javascript ES5:
