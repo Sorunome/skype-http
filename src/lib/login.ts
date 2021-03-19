@@ -111,6 +111,8 @@ async function subscribeToResources(
   /* all resources found in skype web code
       interestedResources: [
       "/v1/threads/ALL",
+      "/v1/users/ME/contacts/ALL",
+      "/v1/users/ME/conversations/ALL/messages",
       "/v1/users/ME/conversations/ALL/properties",
       "/v1/users/ME/endpoints/SELF/signals",
       "/v1/users/ME/conversations/ALL/properties?view=consumptionHorizon",
