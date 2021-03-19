@@ -1,4 +1,4 @@
-import { MessageResource } from "./resources";
+import { MessageResource } from './resources';
 
 export interface ThreadProperties {
   topic?: string;
@@ -22,27 +22,37 @@ export interface Conversation {
   targetLink: string;
   threadProperties?: ThreadProperties;
   id: string;
-  type: "Conversation" | string;
+  type: 'Conversation' | string;
   version: number; // a timestamp ? example: 1464030261015
   properties: {
     // example: "1461605505609;1461605570732;10435004700722293356"
     consumptionhorizon?: string;
   };
   // TODO: Check if empty object really occurs
-  lastMessage: {} | MessageResource;
+  lastMessage: Record<string, never> | MessageResource;
   // https://{host}/v1/users/ME/contacts/{thread}/messages (even if targetLink points to /v1/threads)
   messages: string;
 }
 
-export type Capability = "AddMember" | "ChangeTopic" | "ChangePicture" | "EditMsg" | "CallP2P"
-  | "SendText" | "SendSms" | "SendContacts" | "SendVideoMsg" | "SendMediaMsg" | "ChangeModerated";
+export type Capability =
+  | 'AddMember'
+  | 'ChangeTopic'
+  | 'ChangePicture'
+  | 'EditMsg'
+  | 'CallP2P'
+  | 'SendText'
+  | 'SendSms'
+  | 'SendContacts'
+  | 'SendVideoMsg'
+  | 'SendMediaMsg'
+  | 'ChangeModerated';
 
 export interface ThreadMember {
   // "8:..."
   id: string;
   // url https://{host}/v1/users/{user}
   userLink: string;
-  role: "User" | "Admin" | string;
+  role: 'User' | 'Admin' | string;
   capabilities: any[];
   // can be an empty string
   linkedMri: string;
@@ -58,14 +68,14 @@ export interface AllUsers {
 
 export interface Members {
   id: string;
-  role: "Admin" | "User" | string;
+  role: 'Admin' | 'User' | string;
 }
 
 export interface Thread {
   // "19:..."
   id: string;
   // enum ?
-  type: "Thread" | string;
+  type: 'Thread' | string;
   properties: {
     // epoch ?
     createdat: string;
@@ -73,7 +83,7 @@ export interface Thread {
     creator: string;
     topic: string;
     // "true" or "false"
-    joiningenabled: "true" | "false" | string;
+    joiningenabled: 'true' | 'false' | string;
     capabilities: Capability[];
     // TODO: check
     lastjoinat?: string;

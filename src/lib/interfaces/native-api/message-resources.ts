@@ -1,21 +1,21 @@
-import { MessageResource, Resource } from "./resources";
+import { MessageResource } from './resources';
 
 export interface Control extends MessageResource {
-  messagetype: "Control/LiveState" | "Control/ClearTyping" | "Control/Typing";
+  messagetype: 'Control/LiveState' | 'Control/ClearTyping' | 'Control/Typing';
 }
 
 export interface ControlClearTyping extends Control {
-  messagetype: "Control/ClearTyping";
+  messagetype: 'Control/ClearTyping';
   counterpartymessageid: string;
 }
 
 export interface ControlTyping extends Control {
-  messagetype: "Control/Typing";
+  messagetype: 'Control/Typing';
   counterpartymessageid: string;
 }
 
 export interface ControlLiveState extends Control {
-  messagetype: "Control/LiveState";
+  messagetype: 'Control/LiveState';
   content: string; // seen: `1/2 ${username} 1 10 ${JSON.stringify(ControlLiveStateContent)}`
 }
 
@@ -34,7 +34,7 @@ export interface ControlLiveStateStatistic {
 
 // stringified in ControlLiveState.content
 export interface ControlLiveStateContent {
-  AccessToken: "NgAccessToken" | string; // TODO
+  AccessToken: 'NgAccessToken' | string; // TODO
   GUID: string; // [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
   MaxLiveParticipants: number;
   NodeInfo: string; // 40 chars long base64 string ?
@@ -54,58 +54,58 @@ export interface ControlLiveStateContent {
 }
 
 export interface EventCall extends MessageResource {
-  messagetype: "Event/Call";
+  messagetype: 'Event/Call';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // XML with root <partlist>
   skypeguid: string; // [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 }
 export interface SignalFlamingo extends MessageResource {
-  messagetype: "Signal/Flamingo";
+  messagetype: 'Signal/Flamingo';
   content: string; // json with then a base64 encoded payload
   skypeguid: string;
 }
 export interface Text extends MessageResource {
-  messagetype: "Text";
+  messagetype: 'Text';
   clientmessageid: string; // A large integer (~20 digits)
   content: string;
   properties: string;
 }
 
 export interface RichText extends MessageResource {
-  messagetype: "RichText";
+  messagetype: 'RichText';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // For example when using smileys: "Hi <ss type=\"smile\">:)</ss>"
 }
 export interface UriObject extends MessageResource {
-  messagetype: "RichText/UriObject";
+  messagetype: 'RichText/UriObject';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // XML, root is <URIObject>
 }
 
 export interface LocationObject extends MessageResource {
-  messagetype: "RichText/Location";
+  messagetype: 'RichText/Location';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // XML, root is <URIObject>
 }
 export interface MediaGenericFile extends MessageResource {
-  messagetype: "RichText/Media_GenericFile";
+  messagetype: 'RichText/Media_GenericFile';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // XML, root is <URIObject>
 }
 export interface MediaVideo extends MessageResource {
-  messagetype: "RichText/Media_Video";
+  messagetype: 'RichText/Media_Video';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // XML, root is <URIObject>
 }
 
 export interface MediaAudio extends MessageResource {
-  messagetype: "RichText/Media_AudioMsg";
+  messagetype: 'RichText/Media_AudioMsg';
   clientmessageid: string;
   content: string;
 }
 
 export interface MemberConsumptionHorizonUpdate extends MessageResource {
-  messagetype: "ThreadActivity/MemberConsumptionHorizonUpdate";
+  messagetype: 'ThreadActivity/MemberConsumptionHorizonUpdate';
   clientmessageid: string; // A large integer (~20 digits)
   content: string; // json
 }

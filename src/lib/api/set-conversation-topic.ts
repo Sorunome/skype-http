@@ -1,7 +1,7 @@
-import { Incident } from "incident";
-import { Context } from "../interfaces/api/context";
-import * as io from "../interfaces/http-io";
-import * as messagesUri from "../messages-uri";
+import { Incident } from 'incident';
+import { Context } from '../interfaces/api/context';
+import * as io from '../interfaces/http-io';
+import * as messagesUri from '../messages-uri';
 
 interface RequestBody {
   topic: string;
@@ -13,7 +13,6 @@ export async function setConversationTopic(
   conversationId: string,
   topic: string,
 ): Promise<void> {
-
   const requestBody: RequestBody = {
     topic,
   };
@@ -24,16 +23,16 @@ export async function setConversationTopic(
     url,
     cookies: apiContext.cookies,
     body: JSON.stringify(requestBody),
-    queryString: {name: "topic"},
+    queryString: { name: 'topic' },
     headers: {
-      "RegistrationToken": apiContext.registrationToken.raw,
-      "Content-type": "application/json",
+      RegistrationToken: apiContext.registrationToken.raw,
+      'Content-type': 'application/json',
     },
     proxy: apiContext.proxy,
   };
   const res: io.Response = await io.put(requestOptions);
 
   if (res.statusCode !== 200) {
-    return Promise.reject(new Incident("set-conversation-topic", "Received wrong return code"));
+    return Promise.reject(new Incident('set-conversation-topic', 'Received wrong return code'));
   }
 }

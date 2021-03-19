@@ -1,4 +1,4 @@
-import toughCookie from "tough-cookie";
+import toughCookie from 'tough-cookie';
 
 /**
  * Represents the OAuth token used for most calls to the Skype API.

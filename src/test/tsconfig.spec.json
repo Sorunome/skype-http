@@ -1,0 +1,19 @@
+{
+  "extends": "./../../tsconfig.json",
+  "compilerOptions": {
+    "declaration": false,
+    "outDir": "./out-tsc/spec",
+    "noUnusedLocals": false,
+    "preserveConstEnums": true,
+    "types": [
+      "mocha",
+      "node"
+    ],
+    "rootDir": ".."
+  },
+  "include": [
+    "./**/*.ts",
+    "../lib/**/*.ts"
+  ],
+  "exclude": []
+}

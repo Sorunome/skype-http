@@ -1,14 +1,12 @@
-import { Context } from "../interfaces/api/context";
-import * as io from "../interfaces/http-io";
+import { Context } from '../interfaces/api/context';
+import * as io from '../interfaces/http-io';
 
-export async function addBotAsContact(io: io.HttpIo,
-                                      apiContext: Context,
-                                      botId: string): Promise<boolean> {
+export async function addBotAsContact(io: io.HttpIo, apiContext: Context, botId: string): Promise<boolean> {
   const requestOptions: io.PutOptions = {
     url: `https://api.aps.skype.com/v1/relationship/me/${botId}`,
     cookies: apiContext.cookies,
     headers: {
-      "X-Skypetoken": apiContext.skypeToken.value,
+      'X-Skypetoken': apiContext.skypeToken.value,
     },
     proxy: apiContext.proxy,
   };
@@ -21,14 +19,12 @@ export async function addBotAsContact(io: io.HttpIo,
   return res.statusCode === 204;
 }
 
-export async function removeBotFromContacts(io: io.HttpIo,
-                                            apiContext: Context,
-                                            botId: string): Promise<boolean> {
+export async function removeBotFromContacts(io: io.HttpIo, apiContext: Context, botId: string): Promise<boolean> {
   const requestOptions: io.DeleteOptions = {
     url: `https://api.aps.skype.com/v1/relationship/me/${botId}`,
     cookies: apiContext.cookies,
     headers: {
-      "X-Skypetoken": apiContext.skypeToken.value,
+      'X-Skypetoken': apiContext.skypeToken.value,
     },
     proxy: apiContext.proxy,
   };

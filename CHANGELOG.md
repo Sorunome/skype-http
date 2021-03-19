@@ -1,3 +1,18 @@
+# 2.0.1 (2021-03-19)
+- **[Fix]** Merge fork project into main one
+
+# 1.1.2 (2021-03-19)
+- **[Fix]** Don't gzip and compress requests to Live.com
+
+# 1.1.1 (2021-01-21)
+- **[Feature]** Expose `Resource` interfaces for easier using outputs of `getMessages` method
+
+# 1.1.0 (2021-01-19)
+- **[Feature]** Restore functionality of `getMessages(conversationId: string)`
+
+# 1.0.1 (2021-01-18)
+- **[Fix]** Change attribute order of `addMemberToConversation` method to `(memberId: string, conversationId: string, role: 'Admin' | 'User])`
+
 # 0.0.15 (2018-02-14)
 
 - **[Feature]** Add `setConversationTopic(conversationId: string, topic: string)`

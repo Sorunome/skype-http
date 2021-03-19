@@ -1,20 +1,20 @@
-import { Incident } from "incident";
-import toughCookie from "tough-cookie";
-import url from "url";
-import * as Consts from "../consts";
-import { EndpointRegistrationError } from "../errors/endpoint-registration";
-import { MissingHeaderError, UnexpectedHttpStatusError } from "../errors/http";
-import { LoginRateLimitExceeded, RedirectionLimit } from "../errors/index";
-import { RegistrationInfo, RegistrationToken, SkypeToken } from "../interfaces/api/context";
-import * as io from "../interfaces/http-io";
-import * as messagesUri from "../messages-uri";
-import * as utils from "../utils";
-import { hmacSha256 } from "../utils/hmac-sha256";
+import { Incident } from 'incident';
+import toughCookie from 'tough-cookie';
+import url from 'url';
+import * as Consts from '../consts';
+import { EndpointRegistrationError } from '../errors/endpoint-registration';
+import { MissingHeaderError, UnexpectedHttpStatusError } from '../errors/http';
+import { LoginRateLimitExceeded, RedirectionLimit } from '../errors/index';
+import { RegistrationInfo, RegistrationToken, SkypeToken } from '../interfaces/api/context';
+import * as io from '../interfaces/http-io';
+import * as messagesUri from '../messages-uri';
+import * as utils from '../utils';
+import { hmacSha256 } from '../utils/hmac-sha256';
 
 function getLockAndKeyResponse(time: number): string {
-  const inputBuffer: Buffer = Buffer.from(String(time), "utf8");
-  const appIdBuffer: Buffer = Buffer.from(Consts.SKYPEWEB_LOCKANDKEY_APPID, "utf8");
-  const secretBuffer: Buffer = Buffer.from(Consts.SKYPEWEB_LOCKANDKEY_SECRET, "utf8");
+  const inputBuffer: Buffer = Buffer.from(String(time), 'utf8');
+  const appIdBuffer: Buffer = Buffer.from(Consts.SKYPEWEB_LOCKANDKEY_APPID, 'utf8');
+  const secretBuffer: Buffer = Buffer.from(Consts.SKYPEWEB_LOCKANDKEY_SECRET, 'utf8');
   return hmacSha256(inputBuffer, appIdBuffer, secretBuffer);
 }
 
@@ -22,12 +22,12 @@ function getLockAndKeyResponse(time: number): string {
  * Value used for the `ClientInfo` header of the request for the registration token.
  */
 const CLIENT_INFO_HEADER: string = utils.stringifyHeaderParams({
-  os: "Windows",
-  osVer: "10",
-  proc: "Win64",
-  lcid: "en-us",
-  deviceType: "1",
-  country: "n/a",
+  os: 'Windows',
+  osVer: '10',
+  proc: 'Win64',
+  lcid: 'en-us',
+  deviceType: '1',
+  country: 'n/a',
   clientName: Consts.SKYPEWEB_CLIENTINFO_NAME,
   clientVer: Consts.SKYPEWEB_CLIENTINFO_VERSION,
 });
@@ -64,14 +64,14 @@ export async function registerEndpoint(
   cookies: toughCookie.Store,
   skypeToken: SkypeToken,
   messagesHostname: string,
-  retries: number = 2,
+  retries = 2,
   proxy?: string,
 ): Promise<RegistrationToken> {
   // TODO: Use this array to report all the requests and responses in case of failure
   const tries: { req: io.PostOptions; res: io.Response }[] = [];
 
   // Use non-strict equality to try at least once. `tryCount` counts the number of failures.
-  for (let tryCount: number = 0; tryCount <= retries; tryCount++) {
+  for (let tryCount = 0; tryCount <= retries; tryCount++) {
     const req: io.PostOptions = {
       url: messagesUri.endpoints(messagesHostname),
       proxy,
@@ -79,22 +79,23 @@ export async function registerEndpoint(
         LockAndKey: getLockAndKeyHeader(utils.getCurrentTime()),
         // TODO(demurgos, 2017-11-12): Remove the `ClientHeader` header, SkPy does not send it.
         ClientInfo: CLIENT_INFO_HEADER,
-        Authentication: utils.stringifyHeaderParams({skypetoken: skypeToken.value}),
+        Authentication: utils.stringifyHeaderParams({ skypetoken: skypeToken.value }),
         // See: https://github.com/OllieTerrance/SkPy/issues/54#issuecomment-295746871
-        BehaviorOverride: "redirectAs404",
+        BehaviorOverride: 'redirectAs404',
       },
       cookies,
       // See: https://github.com/OllieTerrance/SkPy/blob/7b6be6e41238058b9ab644d908621456764fb6d6/skpy/conn.py#L717
       body: JSON.stringify({
-        endpointFeatures: "Agent,Presence2015,MessageProperties," +
-          "CustomUserProperties,Highlights,Casts,CortanaBot,ModernBots,AutoIdleForWebApi," +
-          "secureThreads,InviteFree,SupportsReadReceipts,notificationStream",
+        endpointFeatures:
+          'Agent,Presence2015,MessageProperties,' +
+          'CustomUserProperties,Highlights,Casts,CortanaBot,ModernBots,AutoIdleForWebApi,' +
+          'secureThreads,InviteFree,SupportsReadReceipts,notificationStream',
       }),
       throwHttpErrors: false,
     };
 
     const res: io.Response = await io.post(req);
-    tries.push({req, res});
+    tries.push({ req, res });
 
     if (res.statusCode === 429) {
       // Expected res.body: `'{"errorCode":803,"message":"Login Rate limit exceeded"}'`
@@ -109,29 +110,29 @@ export async function registerEndpoint(
       throw new EndpointRegistrationError(UnexpectedHttpStatusError.create(res, expectedStatusCode, req), tries);
     }
 
-    const locationHeader: string | undefined = res.headers["location"];
+    const locationHeader: string | undefined = res.headers['location'];
     if (locationHeader === undefined) {
-      throw new EndpointRegistrationError(MissingHeaderError.create(res, "Location", req), tries);
+      throw new EndpointRegistrationError(MissingHeaderError.create(res, 'Location', req), tries);
     }
 
     // TODO: parse in messages-uri.ts
     const location: url.Url = url.parse(locationHeader);
     if (location.host === undefined) {
-      throw new Incident("ParseError", {res}, "Expected `Location` header to have host");
+      throw new Incident('ParseError', { res }, 'Expected `Location` header to have host');
     }
     // Handle redirections, up to `retry` times
     // Redirections happen mostly when 301, but sometimes when 201
     // TODO: It may have changed to mostly 404.
     if (location.host !== messagesHostname) {
-      messagesHostname = location.host;
+      messagesHostname = location.host as string;
       continue;
     }
 
     // registrationTokenHeader is like "registrationToken=someString; expires=someNumber; endpointId={someString}"
-    const registrationTokenHeader: string | undefined = res.headers["set-registrationtoken"];
+    const registrationTokenHeader: string | undefined = res.headers['set-registrationtoken'];
 
     if (registrationTokenHeader === undefined) {
-      throw new EndpointRegistrationError(MissingHeaderError.create(res, "Set-Registrationtoken", req), tries);
+      throw new EndpointRegistrationError(MissingHeaderError.create(res, 'Set-Registrationtoken', req), tries);
     }
 
     return readSetRegistrationTokenHeader(messagesHostname, registrationTokenHeader);
@@ -148,31 +149,37 @@ export async function updateRegistrationInfo(
   proxy?: string,
 ): Promise<RegistrationInfo> {
   const req: io.PutOptions = {
-    url: "https://client-s.gateway.messenger.live.com/v2/users/ME/endpoints/"
-      + encodeURIComponent(registrationToken.endpointId),
+    url:
+      'https://client-s.gateway.messenger.live.com/v2/users/ME/endpoints/' +
+      encodeURIComponent(registrationToken.endpointId),
     proxy,
     headers: {
-      "Authentication": utils.stringifyHeaderParams({skypetoken: skypeToken.value}),
-      "Content-Type": "application/json",
+      Authentication: utils.stringifyHeaderParams({ skypetoken: skypeToken.value }),
+      'Content-Type': 'application/json',
     },
     cookies,
     body: JSON.stringify({
-      endpointFeatures: "Agent,Presence2015,MessageProperties,CustomUserProperties,Highlights,Casts," +
-        "CortanaBot,ModernBots,AutoIdleForWebApi,secureThreads,InviteFree,SupportsReadReceipts," +
-        "notificationStream",
-      subscriptions: [{
-        channelType: "httpLongPoll",
-        interestedResources: ["/v1/users/ME/conversations/ALL/properties",
-          "/v1/users/ME/conversations/ALL/messages",
-          "/v1/threads/ALL"],
-      }],
+      endpointFeatures:
+        'Agent,Presence2015,MessageProperties,CustomUserProperties,Highlights,Casts,' +
+        'CortanaBot,ModernBots,AutoIdleForWebApi,secureThreads,InviteFree,SupportsReadReceipts,' +
+        'notificationStream',
+      subscriptions: [
+        {
+          channelType: 'httpLongPoll',
+          interestedResources: [
+            '/v1/users/ME/conversations/ALL/properties',
+            '/v1/users/ME/conversations/ALL/messages',
+            '/v1/threads/ALL',
+          ],
+        },
+      ],
     }),
   };
 
   const res: io.Response = await io.put(req);
 
   if (res.statusCode !== 200) {
-    console.log("ERROR updateRegistrationInfo", res);
+    console.log('ERROR updateRegistrationInfo', res);
   }
 
   return JSON.parse(res.body);
@@ -189,12 +196,12 @@ export async function updateRegistrationInfo(
  */
 export function readSetRegistrationTokenHeader(hostname: string, header: string): RegistrationToken {
   const parsedHeader: Map<string, string> = utils.parseHeaderParams(header);
-  const expiresString: string | undefined = parsedHeader.get("expires");
-  const registrationTokenValue: string | undefined = parsedHeader.get("registrationToken");
-  const endpointId: string | undefined = parsedHeader.get("endpointId");
+  const expiresString: string | undefined = parsedHeader.get('expires');
+  const registrationTokenValue: string | undefined = parsedHeader.get('registrationToken');
+  const endpointId: string | undefined = parsedHeader.get('endpointId');
 
   if (registrationTokenValue === undefined || expiresString === undefined || endpointId === undefined) {
-    throw new Incident("InvalidSetRegistrationTokenHeader", {header, parsed: parsedHeader});
+    throw new Incident('InvalidSetRegistrationTokenHeader', { header, parsed: parsedHeader });
   }
 
   // Timestamp in seconds since UNIX epoch

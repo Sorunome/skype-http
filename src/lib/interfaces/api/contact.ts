@@ -1,5 +1,5 @@
-import { Location } from "../../types/location";
-import { FullId } from "./api";
+import { Location } from '../../types/location';
+import { FullId } from './api';
 
 export interface Phone {
   number: string; // pattern: /^+\d+$/  (with country code)
@@ -9,10 +9,10 @@ export interface Phone {
 export interface Contact {
   // TODO: Use MriKey
   id: FullId;
-  workloads: "skype" | string | null; // probably enum
+  workloads: 'skype' | string | null; // probably enum
   avatarUrl: string | null;
   phones: Phone[];
-  emails?: String[];
+  emails?: string[];
   name: {
     first: string | null;
     surname: string | null;
@@ -27,8 +27,8 @@ export interface Profile {
   fistname: string;
   lastname: string;
   birthday: any | null;
-  language: "en" | string; // enum ?
-  country: "us" | string; // enum ?
+  language: 'en' | string; // enum ?
+  country: 'us' | string; // enum ?
   province: any | null;
   city: any | null;
   homepage: any | null;

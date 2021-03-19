@@ -1,11 +1,11 @@
-import { Incident } from "incident";
-import _ from "lodash";
-import { Context } from "../interfaces/api/context";
-import { Conversation } from "../interfaces/api/conversation";
-import * as io from "../interfaces/http-io";
-import { Conversation as NativeConversation } from "../interfaces/native-api/conversation";
-import * as messagesUri from "../messages-uri";
-import { formatConversation } from "../utils/formatters";
+import { Incident } from 'incident';
+import { map } from 'lodash';
+import { Context } from '../interfaces/api/context';
+import { Conversation } from '../interfaces/api/conversation';
+import * as io from '../interfaces/http-io';
+import { Conversation as NativeConversation } from '../interfaces/native-api/conversation';
+import * as messagesUri from '../messages-uri';
+import { formatConversation } from '../utils/formatters';
 
 interface ConversationsBody {
   conversations: NativeConversation[];
@@ -19,15 +19,15 @@ interface ConversationsBody {
 
 interface GetConversationsQuery {
   startTime: string; // a timestamp ?
-  view: "msnp24Equivalent" | string;
+  view: 'msnp24Equivalent' | string;
   targetType: string; // seen: Passport|Skype|Lync|Thread
 }
 
 export async function getConversations(io: io.HttpIo, apiContext: Context): Promise<Conversation[]> {
   const query: GetConversationsQuery = {
-    startTime: "0",
-    view: "msnp24Equivalent",
-    targetType: "Passport|Skype|Lync|Thread",
+    startTime: '0',
+    view: 'msnp24Equivalent',
+    targetType: 'Passport|Skype|Lync|Thread',
   };
 
   const requestOptions: io.GetOptions = {
@@ -42,8 +42,8 @@ export async function getConversations(io: io.HttpIo, apiContext: Context): Prom
   const res: io.Response = await io.get(requestOptions);
 
   if (res.statusCode !== 200) {
-    return Promise.reject(new Incident("net", "Unable to fetch conversations"));
+    return Promise.reject(new Incident('net', 'Unable to fetch conversations'));
   }
   const body: ConversationsBody = JSON.parse(res.body);
-  return _.map(body.conversations, formatConversation);
+  return map(body.conversations, formatConversation);
 }

@@ -1,8 +1,7 @@
-import { ParsedConversationId } from "../api/api";
-import { RichText, Text } from "./message-resources";
+import { Text } from './message-resources';
 
 export interface Resource {
-  type: "Message" | "UserPresenceDoc" | "EndpointPresenceDoc" | string;
+  type: 'Message' | 'UserPresenceDoc' | 'EndpointPresenceDoc' | string;
   // If type is Message: a large integer, otherwise: "endpointMessagingService"
   id: string;
 }
@@ -25,12 +24,24 @@ export interface CustomUserPropertiesResource extends Resource {
   native?: any;
 }
 
+export type MessageType =
+  | 'Control/LiveState'
+  | 'Control/ClearTyping'
+  | 'Control/Typing'
+  | 'Event/Call'
+  | 'RichText'
+  | 'RichText/UriObject'
+  | 'RichText/Location'
+  | 'RichText/Media_GenericFile'
+  | 'RichText/Media_Video'
+  | 'Signal/Flamingo'
+  | 'Text'
+  | 'RichText/Media_AudioMsg'
+  | 'ThreadActivity/MemberConsumptionHorizonUpdate';
+
 export interface MessageResource extends Resource {
-  type: "Message";
-  messagetype: "Control/LiveState" | "Control/ClearTyping" | "Control/Typing" | "Event/Call"
-  | "RichText" | "RichText/UriObject" | "RichText/Location" | "RichText/Media_GenericFile"
-  | "RichText/Media_Video" | "Signal/Flamingo" | "Text" | "RichText/Media_AudioMsg"
-  | "ThreadActivity/MemberConsumptionHorizonUpdate" | string; // TODO
+  type: 'Message';
+  messagetype: MessageType | string; // TODO
   ackrequired: string;
   // JSON date
   originalarrivaltime: string;
@@ -55,13 +66,13 @@ export interface MessageResource extends Resource {
 
 export interface UserPresenceResource extends Resource {
   // TODO
-  type: "UserPresenceDoc" | string;
+  type: 'UserPresenceDoc' | string;
   // https://{host}/v1/users/{user}/presenceDocs/endpointMessagingService" user is 8:username
   selfLink: string;
   // TODO
-  availability: "Offline" | "Online" | string;
+  availability: 'Offline' | 'Online' | string;
   // TODO
-  status: "Offline" | "Online" | "Idle" | string;
+  status: 'Offline' | 'Online' | 'Idle' | string;
   // looks like capabilities.join(" | ") where capabilities is one of ["Seamless", "SmsUpgrade", "IsMobile"];
   capabilities: string;
   // a JSON date
@@ -72,7 +83,7 @@ export interface UserPresenceResource extends Resource {
 
 export interface EndpointPresenceResource extends Resource {
   // TODO
-  type: "EndpointPresenceDoc" | string;
+  type: 'EndpointPresenceDoc' | string;
   // https://{host}/v1/users/{user}/endpoints/{endpoint}/presenceDocs/endpointMessagingService
   selfLink: string;
   publicInfo: {

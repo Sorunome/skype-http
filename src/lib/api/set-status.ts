@@ -1,8 +1,8 @@
-import { Incident } from "incident";
-import * as api from "../interfaces/api/api";
-import { Context } from "../interfaces/api/context";
-import * as io from "../interfaces/http-io";
-import * as messagesUri from "../messages-uri";
+import { Incident } from 'incident';
+import * as api from '../interfaces/api/api';
+import { Context } from '../interfaces/api/context';
+import * as io from '../interfaces/http-io';
+import * as messagesUri from '../messages-uri';
 
 interface RequestBody {
   status: string;
@@ -24,6 +24,6 @@ export async function setStatus(io: io.HttpIo, apiContext: Context, status: api.
   const res: io.Response = await io.put(requestOptions);
 
   if (res.statusCode !== 200) {
-    return Promise.reject(new Incident("send-message", "Received wrong return code"));
+    return Promise.reject(new Incident('send-message', 'Received wrong return code'));
   }
 }

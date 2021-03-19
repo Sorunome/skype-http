@@ -7,7 +7,7 @@
     "alwaysStrict": true,
     "charset": "utf8",
     "checkJs": false,
-    "declaration": false,
+    "declaration": true,
     "disableSizeLimit": false,
     "downlevelIteration": false,
     "emitBOM": false,
@@ -20,8 +20,7 @@
     "inlineSources": false,
     "isolatedModules": false,
     "lib": [
-      "es2017",
-      "esnext.asynciterable"
+      "es2018"
     ],
     "locale": "en-us",
     "module": "commonjs",
@@ -41,6 +40,7 @@
     "noImplicitUseStrict": false,
     "noLib": false,
     "noResolve": false,
+    "outDir": "./dist",
     "preserveConstEnums": false,
     "removeComments": false,
     "skipLibCheck": true,
@@ -55,5 +55,7 @@
       "src/custom-typings",
       "node_modules/@types"
     ]
-  }
+  },
+  "include": ["src/**/*.*"],
+  "exclude": ["src/**/*.test.ts"]
 }

@@ -1,7 +1,7 @@
-import { AnyType } from "kryo/types/any";
-import { ArrayType } from "kryo/types/array";
-import { DocumentType } from "kryo/types/document";
-import { Ucs2StringType } from "kryo/types/ucs2-string";
+import { AnyType } from 'kryo/types/any';
+import { ArrayType } from 'kryo/types/array';
+import { DocumentType } from 'kryo/types/document';
+import { Ucs2StringType } from 'kryo/types/ucs2-string';
 
 /*  Couldn't figure out how to por this code, mainly how to make TryUnionType work with NullType
 
@@ -98,23 +98,23 @@ export const $ApiProfile: DocumentType<ApiProfile> = new DocumentType<ApiProfile
   properties: {
     firstname: { type: new AnyType(), optional: true },
     lastname: { type: new AnyType(), optional: true },
-    birthday: {type: new AnyType()},
-    gender: {type: new AnyType()},
-    language: {type: new AnyType()},
-    country: {type: new AnyType()},
-    province: {type: new AnyType()},
-    city: {type: new AnyType()},
-    homepage: {type: new AnyType()},
-    about: {type: new AnyType()},
-    emails: {type: new ArrayType({itemType: new Ucs2StringType({maxLength: Infinity}), maxLength: Infinity})},
-    jobtitle: {type: new AnyType()},
-    phoneMobile: {type: new AnyType()},
-    phoneHome: {type: new AnyType()},
-    phoneOffice: {type: new AnyType()},
-    mood: {type: new AnyType()},
-    richMood: {type: new AnyType()},
-    avatarUrl: {type: new AnyType()},
-    username: {type: new Ucs2StringType({maxLength: Infinity})},
+    birthday: { type: new AnyType() },
+    gender: { type: new AnyType() },
+    language: { type: new AnyType() },
+    country: { type: new AnyType() },
+    province: { type: new AnyType() },
+    city: { type: new AnyType() },
+    homepage: { type: new AnyType() },
+    about: { type: new AnyType() },
+    emails: { type: new ArrayType({ itemType: new Ucs2StringType({ maxLength: Infinity }), maxLength: Infinity }) },
+    jobtitle: { type: new AnyType() },
+    phoneMobile: { type: new AnyType() },
+    phoneHome: { type: new AnyType() },
+    phoneOffice: { type: new AnyType() },
+    mood: { type: new AnyType() },
+    richMood: { type: new AnyType() },
+    avatarUrl: { type: new AnyType() },
+    username: { type: new Ucs2StringType({ maxLength: Infinity }) },
   },
   noExtraKeys: true,
 });

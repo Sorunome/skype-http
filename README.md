@@ -2,6 +2,13 @@
 
 [![npm](https://img.shields.io/npm/v/skype-http.svg?maxAge=2592000)](https://www.npmjs.com/package/skype-http)
 [![GitHub repository](https://img.shields.io/badge/Github-ocilo%2Fskype--http-blue.svg)](https://github.com/ocilo/skype-http)
+[![Snyk Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@sergiov85/skype-http)](https://snyk.io/)
+
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=bugs)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=code_smells)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SergioV85_skype-http&metric=coverage)](https://sonarcloud.io/dashboard?id=SergioV85_skype-http)
+
 [![Codecov](https://codecov.io/gh/ocilo/skype-http/branch/master/graph/badge.svg)](https://codecov.io/gh/ocilo/skype-http)
 [![Build status](https://img.shields.io/travis/ocilo/skype-http/master.svg?maxAge=2592000)](https://travis-ci.org/ocilo/skype-http)
 [![Greenkeeper badge](https://badges.greenkeeper.io/ocilo/skype-http.svg)](https://greenkeeper.io/)
@@ -87,15 +94,15 @@ You can find the decompiled source code of the Skype Web Application on [the `sk
 
 ## What's not working and probably never will.
 
-* [Old P2P group chats](https://github.com/ShyykoSerhiy/skyweb/issues/6). According to  [Skype community site ](http://community.skype.com/t5/Skype-for-Web-Beta/Group-chats-missing-on-skype-web/td-p/3884218) only new, Cloud based group chats are shown in SkypeWeb Beta(therefore works in this API). The old P2P group chats are not.  
+* [Old P2P group chats](https://github.com/ShyykoSerhiy/skyweb/issues/6). According to  [Skype community site ](http://community.skype.com/t5/Skype-for-Web-Beta/Group-chats-missing-on-skype-web/td-p/3884218) only new, Cloud based group chats are shown in SkypeWeb Beta(therefore works in this API). The old P2P group chats are not.
 
 ## Project Background
 
 This project started as a fork of the https://github.com/ShyykoSerhiy/skyweb after slow progress from 3rd party patches. The goal is to provide stronger guarantees about the objects returned by the API (through checks and normalization) and better error management, because scrapping/unofficial API calls are unreliable so the library should be resilient.
 
-## Disclaimer 
+## Disclaimer
 This project relies on SkypeWeb Skype implementation. If Microsoft Corporation decides to remove Skype
-implementation (or change it in any) skype-http might not be in working state. Therefore it's not recommended to use it 
+implementation (or change it in any) skype-http might not be in working state. Therefore it's not recommended to use it
 in any critical part of production code. In fact it's not recommended to use it in production at all.
 
 [MIT License](https://github.com/demurgos/skype-http/blob/master/LICENSE.md).

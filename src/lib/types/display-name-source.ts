@@ -1,5 +1,5 @@
-import { CaseStyle } from "kryo/case-style";
-import { TsEnumType } from "kryo/types/ts-enum";
+import { CaseStyle } from 'kryo/case-style';
+import { TsEnumType } from 'kryo/types/ts-enum';
 
 export enum DisplayNameSource {
   Identifier,

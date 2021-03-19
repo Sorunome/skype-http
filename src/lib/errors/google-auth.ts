@@ -1,26 +1,25 @@
-import { Incident } from "incident";
+import { Incident } from 'incident';
 
 export namespace GoogleAuthRequired {
-  export type Name = "GoogleAuthRequired";
-  export const name: Name = "GoogleAuthRequired";
+  export type Name = 'GoogleAuthRequired';
+  export const name: Name = 'GoogleAuthRequired';
 
-  export interface Data {
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface Data {}
 
   export type Cause = undefined;
 }
 
-export type GoogleAuthRequired = Incident<GoogleAuthRequired.Data,
-  GoogleAuthRequired.Name, GoogleAuthRequired.Cause>;
+export type GoogleAuthRequired = Incident<GoogleAuthRequired.Data, GoogleAuthRequired.Name, GoogleAuthRequired.Cause>;
 
 export namespace GoogleAuthRequired {
   export type Type = GoogleAuthRequired;
 
-  export function format() {
-    return "GoogleAuthRequired";
+  export function format(): string {
+    return 'GoogleAuthRequired';
   }
 
   export function create(username?: string): GoogleAuthRequired {
-    return Incident(name, {username}, format);
+    return Incident(name, { username }, format);
   }
 }

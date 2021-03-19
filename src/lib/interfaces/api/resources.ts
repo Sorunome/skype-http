@@ -1,4 +1,4 @@
-import { ParsedConversationId } from "./api";
+import { ParsedConversationId } from './api';
 
 export interface CallParticipant {
   duration?: number;
@@ -6,10 +6,22 @@ export interface CallParticipant {
   username: string;
 }
 
-export declare type ResourceType = "Text" | "RichText" | "Control/ClearTyping" | "Control/Typing" | "RichText/UriObject"
-  | "RichText/Media_GenericFile" | "Signal/Flamingo" | "Event/Call" | "RichText/Location" | "ConversationUpdate"
-  | "RichText/Media_Video" | "RichText/Media_AudioMsg" | "ThreadActivity/MemberConsumptionHorizonUpdate" | "Ignored"
-  | "CustomUserProperties";
+export declare type ResourceType =
+  | 'Text'
+  | 'RichText'
+  | 'Control/ClearTyping'
+  | 'Control/Typing'
+  | 'RichText/UriObject'
+  | 'RichText/Media_GenericFile'
+  | 'Signal/Flamingo'
+  | 'Event/Call'
+  | 'RichText/Location'
+  | 'ConversationUpdate'
+  | 'RichText/Media_Video'
+  | 'RichText/Media_AudioMsg'
+  | 'ThreadActivity/MemberConsumptionHorizonUpdate'
+  | 'Ignored'
+  | 'CustomUserProperties';
 
 export interface Resource {
   type: ResourceType;
@@ -22,7 +34,7 @@ export interface Resource {
 }
 
 export interface TextResource extends Resource {
-  type: "Text";
+  type: 'Text';
   clientId: string; // An id set by the client
   content: string;
   properties: string;
@@ -50,23 +62,23 @@ export interface FileResource extends Resource {
 }
 
 export interface RichTextMediaGenericFileResource extends FileResource {
-  type: "RichText/Media_GenericFile";
+  type: 'RichText/Media_GenericFile';
 }
 
 export interface RichTextMediaVideoResource extends FileResource {
-  type: "RichText/Media_Video";
+  type: 'RichText/Media_Video';
 }
 
 export interface RichTextMediaAudioResource extends FileResource {
-  type: "RichText/Media_AudioMsg";
+  type: 'RichText/Media_AudioMsg';
 }
 
 export interface RichTextUriObjectResource extends FileResource {
-  type: "RichText/UriObject";
+  type: 'RichText/UriObject';
 }
 
 export interface EventCallResource extends Resource {
-  event_type: "started" | "ended" | "missed";
+  event_type: 'started' | 'ended' | 'missed';
   duration?: number; // duration of the shorted participant on the call
   call_connected: boolean; // if it was connected or missed
   skypeguid: string;
@@ -74,33 +86,33 @@ export interface EventCallResource extends Resource {
 }
 
 export interface RichTextResource extends Resource {
-  type: "RichText";
+  type: 'RichText';
   clientId: string; // An id set by the client
   content: string;
 }
 
-export interface SignalFlamingoResource extends Resource { // incoming call request
-  type: "Signal/Flamingo";
+export interface SignalFlamingoResource extends Resource {
+  // incoming call request
+  type: 'Signal/Flamingo';
   skypeguid: string;
-
 }
 
 export interface ControlClearTypingResource extends Resource {
-  type: "Control/ClearTyping";
+  type: 'Control/ClearTyping';
 }
 
 export interface ControlTypingResource extends Resource {
-  type: "Control/Typing";
+  type: 'Control/Typing';
 }
 
 export interface ConversationUpdateResource extends Resource {
-  type: "ConversationUpdate";
+  type: 'ConversationUpdate';
   clientId: string; // An id set by the client
   content: string;
 }
 
 export interface CustomUserPropertiesResource extends Resource {
-  type: "CustomUserProperties";
+  type: 'CustomUserProperties';
   id: string;
   time: string;
   resourceLink: string;
@@ -108,6 +120,6 @@ export interface CustomUserPropertiesResource extends Resource {
 }
 
 export interface MemberConsumptionHorizonUpdateResource extends Resource {
-  type: "ThreadActivity/MemberConsumptionHorizonUpdate";
+  type: 'ThreadActivity/MemberConsumptionHorizonUpdate';
   content: string;
 }

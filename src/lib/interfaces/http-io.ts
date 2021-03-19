@@ -1,4 +1,4 @@
-import { Store as CookieStore } from "tough-cookie";
+import { Store as CookieStore } from 'tough-cookie';
 export interface BaseOptions {
   url: string;
   cookies?: CookieStore;
@@ -6,11 +6,11 @@ export interface BaseOptions {
   queryString?: any; // {[key: string]: string};
   proxy?: string;
   throwHttpErrors?: boolean;
+  decompress?: boolean;
+  gzip?: boolean;
 }
 
-export interface GetOptions extends BaseOptions {
-
-}
+export type GetOptions = BaseOptions;
 
 export interface PostOptions extends BaseOptions {
   form?: any;

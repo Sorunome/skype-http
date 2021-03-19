@@ -1,11 +1,10 @@
-import { Incident } from "incident";
-import { GetOptions, Response } from "../interfaces/http-io";
-import { MissingHeaderError, UnexpectedHttpStatusError } from "./http";
-import { Type as LoginRateLimitExceeded } from "./login-rate-limit-exceeded";
-import { Type as RedirectionLimit } from "./redirection-limit";
-
+import { Incident } from 'incident';
+import { GetOptions, Response } from '../interfaces/http-io';
+import { MissingHeaderError, UnexpectedHttpStatusError } from './http';
+import { Type as LoginRateLimitExceeded } from './login-rate-limit-exceeded';
+import { Type as RedirectionLimit } from './redirection-limit';
 export namespace EndpointRegistrationError {
-  export type Name = "EndpointRegistration";
+  export type Name = 'EndpointRegistration';
 
   export interface HttpExchange {
     req: GetOptions;
@@ -20,7 +19,7 @@ export namespace EndpointRegistrationError {
 }
 
 export type Name = EndpointRegistrationError.Name;
-export const NAME: Name = "EndpointRegistration";
+export const NAME: Name = 'EndpointRegistration';
 
 export type HttpExchange = EndpointRegistrationError.HttpExchange;
 
@@ -32,6 +31,6 @@ export class EndpointRegistrationError extends Incident<Data, Name, Cause> {
   static NAME: Name = NAME;
 
   constructor(cause: Cause, tries: HttpExchange[]) {
-    super(cause, EndpointRegistrationError.NAME, {tries});
+    super(cause, EndpointRegistrationError.NAME, { tries });
   }
 }

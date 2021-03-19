@@ -1,29 +1,29 @@
-import cheerio from "cheerio";
-import path from "path";
-import toughCookie from "tough-cookie";
-import urlParser from "url";
-import { WrongCredentialsError } from "../errors";
-import { WrongCredentialsLimitError } from "../errors";
-import { AbuseBehavior } from "../errors/abuse-behaviour";
-import { AccountNotFound } from "../errors/account-not-found";
-import { AccountRecoverRestriction } from "../errors/account-recover-restriction";
-import { AccountUpdate } from "../errors/account-update";
-import { GoogleAuthRequired } from "../errors/google-auth";
-import * as httpErrors from "../errors/http";
-import { IdentityCheckRequired } from "../errors/identity-check-required";
-import { MicrosoftAccountLoginError } from "../errors/microsoft-account";
-import * as getLiveKeysErrors from "../errors/microsoft-account/get-live-keys";
-import * as getLiveTokenErrors from "../errors/microsoft-account/get-live-token";
-import * as getSkypeTokenErrors from "../errors/microsoft-account/get-skype-token";
-import { MicrosoftAuthenticator } from "../errors/microsoft-authenticator";
-import { UpsellOfferError } from "../errors/upsell-offer";
-import { SkypeToken } from "../interfaces/api/context";
-import * as io from "../interfaces/http-io";
+import cheerio from 'cheerio';
+import path from 'path';
+import toughCookie from 'tough-cookie';
+import urlParser from 'url';
+import { WrongCredentialsError } from '../errors';
+import { WrongCredentialsLimitError } from '../errors';
+import { AbuseBehavior } from '../errors/abuse-behaviour';
+import { AccountNotFound } from '../errors/account-not-found';
+import { AccountRecoverRestriction } from '../errors/account-recover-restriction';
+import { AccountUpdate } from '../errors/account-update';
+import { GoogleAuthRequired } from '../errors/google-auth';
+import * as httpErrors from '../errors/http';
+import { IdentityCheckRequired } from '../errors/identity-check-required';
+import { MicrosoftAccountLoginError } from '../errors/microsoft-account';
+import * as getLiveKeysErrors from '../errors/microsoft-account/get-live-keys';
+import * as getLiveTokenErrors from '../errors/microsoft-account/get-live-token';
+import * as getSkypeTokenErrors from '../errors/microsoft-account/get-skype-token';
+import { MicrosoftAuthenticator } from '../errors/microsoft-authenticator';
+import { UpsellOfferError } from '../errors/upsell-offer';
+import { SkypeToken } from '../interfaces/api/context';
+import * as io from '../interfaces/http-io';
 
-export const skypeWebUri: string = "https://web.skype.com/";
-export const skypeLoginUri: string = "https://login.skype.com/login/";
-export const liveLoginUri: string = "https://login.live.com/";
-export const webClientLiveLoginId: string = "578134";
+export const skypeWebUri = 'https://web.skype.com/';
+export const skypeLoginUri = 'https://login.skype.com/login/';
+export const liveLoginUri = 'https://login.live.com/';
+export const webClientLiveLoginId = '578134';
 
 /**
  * Checks if the user `username` exists
@@ -124,12 +124,12 @@ export interface LiveKeys {
 
 export async function getLiveKeys(options: LoadLiveKeysOptions): Promise<LiveKeys> {
   try {
-    const url: string = urlParser.resolve(skypeLoginUri, path.posix.join("oauth", "microsoft"));
+    const url: string = urlParser.resolve(skypeLoginUri, path.posix.join('oauth', 'microsoft'));
     const queryString: { [key: string]: string } = {
       client_id: webClientLiveLoginId,
       redirect_uri: skypeWebUri,
     };
-    const getOptions: io.GetOptions = {url, queryString, cookies: options.cookies};
+    const getOptions: io.GetOptions = { url, queryString, cookies: options.cookies, gzip: false, decompress: false };
 
     let response: io.Response;
     try {
@@ -142,14 +142,15 @@ export async function getLiveKeys(options: LoadLiveKeysOptions): Promise<LiveKey
     let mspOk: string | undefined;
 
     // Retrieve values for the cookies "MSPRequ" and "MSPOK"
-    const cookies: toughCookie.Cookie[] = new toughCookie.CookieJar(options.cookies)
-      .getCookiesSync("https://login.live.com/");
+    const cookies: toughCookie.Cookie[] = new toughCookie.CookieJar(options.cookies).getCookiesSync(
+      'https://login.live.com/',
+    );
     for (const cookie of cookies) {
       switch (cookie.key) {
-        case "MSPRequ":
+        case 'MSPRequ':
           mspRequ = cookie.value;
           break;
-        case "MSPOK":
+        case 'MSPOK':
           mspOk = cookie.value;
           break;
         default:
@@ -158,10 +159,10 @@ export async function getLiveKeys(options: LoadLiveKeysOptions): Promise<LiveKey
       }
     }
 
-    if (typeof mspOk !== "string") {
+    if (typeof mspOk !== 'string') {
       throw getLiveKeysErrors.MspokCookieNotFoundError.create(getOptions, response);
     }
-    if (typeof mspRequ !== "string") {
+    if (typeof mspRequ !== 'string') {
       throw getLiveKeysErrors.MsprequCookieNotFoundError.create(getOptions, response);
     }
 
@@ -193,7 +194,7 @@ export async function getLiveKeys(options: LoadLiveKeysOptions): Promise<LiveKey
  */
 export function scrapLivePpftKey(html: string): string {
   /* tslint:disable-next-line:max-line-length */
-  const ppftRegExp: RegExp = /<input\s+type="hidden"\s+name="PPFT"\s+id="i0327"\s+value="([*!0-9a-zA-Z]+\${1,2})"\s*\/>/;
+  const ppftRegExp = /<input\s+type="hidden"\s+name="PPFT"\s+id="i0327"\s+value="([*!0-9a-zA-Z]+\${1,2})"\s*\/>/;
   const regExpResult: RegExpExecArray | null = ppftRegExp.exec(html);
 
   if (regExpResult === null) {
@@ -224,7 +225,7 @@ export async function getLiveToken(options: GetLiveTokenOptions): Promise<string
       case getLiveTokenErrors.LiveTokenNotFoundError.name:
         throw getLiveTokenErrors.GetLiveTokenError.create(err);
       case WrongCredentialsError.name:
-        if (typeof err.data.username !== "string") {
+        if (typeof err.data.username !== 'string') {
           throw WrongCredentialsError.create(options.username);
         } else {
           throw err;
@@ -238,22 +239,23 @@ export async function getLiveToken(options: GetLiveTokenOptions): Promise<string
 
 // Get live token from live keys and credentials
 export async function requestLiveToken(options: GetLiveTokenOptions): Promise<io.Response> {
-  const url: string = urlParser.resolve(liveLoginUri, path.posix.join("ppsecure", "post.srf"));
+  const url: string = urlParser.resolve(liveLoginUri, path.posix.join('ppsecure', 'post.srf'));
   const queryString: { [key: string]: string } = {
-    wa: "wsignin1.0",
-    wp: "MBI_SSL",
+    wa: 'wsignin1.0',
+    wp: 'MBI_SSL',
     // tslint:disable-next-line:max-line-length
-    wreply: "https://lw.skype.com/login/oauth/proxy?client_id=578134&site_name=lw.skype.com&redirect_uri=https%3A%2F%2Fweb.skype.com%2F",
+    wreply:
+      'https://lw.skype.com/login/oauth/proxy?client_id=578134&site_name=lw.skype.com&redirect_uri=https%3A%2F%2Fweb.skype.com%2F',
   };
   // MSPRequ should already be set
   // MSPOK should already be set
   const millisecondsSinceEpoch: number = Date.now(); // Milliseconds since epoch
-  const ckTstCookie: toughCookie.Cookie = new (<any> toughCookie.Cookie)({
-    key: "CkTst",
+  const ckTstCookie: toughCookie.Cookie = new (<any>toughCookie.Cookie)({
+    key: 'CkTst',
     value: millisecondsSinceEpoch.toString(10),
   });
 
-  new toughCookie.CookieJar(options.cookies).setCookieSync(ckTstCookie, "https://login.live.com/");
+  new toughCookie.CookieJar(options.cookies).setCookieSync(ckTstCookie, 'https://login.live.com/');
 
   const formData: any = {
     login: options.username,
@@ -267,10 +269,14 @@ export async function requestLiveToken(options: GetLiveTokenOptions): Promise<io
     cookies: options.cookies,
     form: formData,
     proxy: options.proxy,
+    gzip: false,
+    decompress: false,
   };
 
   try {
-    return options.httpIo.post(postOptions);
+    const result = await options.httpIo.post(postOptions);
+
+    return result;
   } catch (err) {
     throw httpErrors.RequestError.create(err, postOptions);
   }
@@ -286,42 +292,36 @@ export async function requestLiveToken(options: GetLiveTokenOptions): Promise<io
  *
  * @return html to be used by scrapLiveToken
  */
-export async function checkIfUpsellIsPresentAndDismiss(html: string, options: GetLiveTokenOptions)
-  : Promise<string> {
-  let $: CheerioStatic = cheerio.load(html);
-  if (html.indexOf("app=Authenticator") > -1) {
-    console.log("<<<<<<  Upsell Detected  >>>>>");
-    const url: string = $("form").attr("action")
-      .replace('\\"', "").replace('\\"', "");
-    const inputValues: any = $("input");
+export async function checkIfUpsellIsPresentAndDismiss(html: string, options: GetLiveTokenOptions): Promise<string> {
+  let $: cheerio.Root = cheerio.load(html);
+  if (html.indexOf('app=Authenticator') > -1) {
+    console.log('<<<<<<  Upsell Detected  >>>>>');
+    const url: string = ($('form').attr('action') as string).replace('\\"', '').replace('\\"', '');
+    const inputValues: any = $('input');
 
     // tslint:disable-next-line variable-name
-    let client_flight: any = "";
-    let ipt: any = "";
-    let pprid: any = "";
-    let uaid: any = "";
+    let client_flight: any = '';
+    let ipt: any = '';
+    let pprid: any = '';
+    let uaid: any = '';
 
-    Object.values(inputValues).forEach(element => {
-      // @ts-ignore
+    Object.values(inputValues).forEach((element: any) => {
       if (element.attribs) {
-        // @ts-ignore
-        const paramName: string = element.attribs.name
-          .replace('\\"', "").replace('\\"', "");
-        // @ts-ignore
-        const paramValue: string = element.attribs.value
-          .replace('\\"', "").replace('\\"', "");
+        const paramName: string = element.attribs.name.replace('\\"', '').replace('\\"', '');
+
+        const paramValue: string = element.attribs.value.replace('\\"', '').replace('\\"', '');
 
         switch (paramName) {
-          case "client_flight":
+          case 'client_flight':
             client_flight = paramValue;
             break;
-          case "ipt":
+          case 'ipt':
             ipt = paramValue;
             break;
-          case "pprid":
+          case 'pprid':
             pprid = paramValue;
             break;
-          case "uaid":
+          case 'uaid':
             uaid = paramValue;
             break;
           default:
@@ -347,9 +347,12 @@ export async function checkIfUpsellIsPresentAndDismiss(html: string, options: Ge
     const getUpsellInfoResponse: io.Response = await options.httpIo.post(postOptions);
 
     $ = cheerio.load(getUpsellInfoResponse.body);
-    const scriptData: any = $("script").get()[6].children[0].data;
-    const parse: any = JSON.parse(scriptData.replace("//<![CDATA[\n$Config=", "")
-      .replace(';window.$Do && window.$Do.register(\"$Config\", 0, true);\n//]]>', ""));
+    const scriptData: any = $('script').get()[6].children[0].data;
+    const parse: any = JSON.parse(
+      scriptData
+        .replace('//<![CDATA[\n$Config=', '')
+        .replace(';window.$Do && window.$Do.register("$Config", 0, true);\n//]]>', ''),
+    );
 
     const cancelUpselPostOptions: io.PostOptions = {
       url: parse.WLXAccount.upsellAuthenticator.options.viewDefs.cancel.url,
@@ -359,7 +362,7 @@ export async function checkIfUpsellIsPresentAndDismiss(html: string, options: Ge
 
     const cancelUpsellResponse: io.Response = await options.httpIo.post(cancelUpselPostOptions);
 
-    console.log("<<<<<<  Upsell Avoided  >>>>>");
+    console.log('<<<<<<  Upsell Avoided  >>>>>');
     return cancelUpsellResponse.body;
   } else {
     return html;
@@ -373,36 +376,36 @@ export async function checkIfUpsellIsPresentAndDismiss(html: string, options: Ge
  */
 export function scrapLiveToken(html: string): string {
   // TODO(demurgos): Handle the possible failure of .load (invalid HTML)
-  const $: CheerioStatic = cheerio.load(html);
+  const $: cheerio.Root = cheerio.load(html);
 
-  const tokenNode: Cheerio = $("#t");
-  const formSubmitUrl: string | undefined = $("form").attr("action");
+  const tokenNode: cheerio.Cheerio = $('#t');
+  const formSubmitUrl: string | undefined = $('form').attr('action');
 
   const tokenValue: string | undefined = tokenNode.val();
-  if (tokenValue === undefined || tokenValue === "") {
-    if (html.indexOf("sErrTxt:'Your account or password is incorrect.") >= 0
-      && html.indexOf("GoogleRedirectUrl") < 0) {
+  if (tokenValue === undefined || tokenValue === '') {
+    if (html.indexOf("sErrTxt:'Your account or password is incorrect.") >= 0 && html.indexOf('GoogleRedirectUrl') < 0) {
       throw WrongCredentialsError.create();
       /* tslint:disable-next-line:max-line-length */
-    } else if (html.indexOf("sErrTxt:\"You\\'ve tried to sign in too many times with an incorrect account or password.\"") >= 0) {
+    } else if (
+      html.indexOf('sErrTxt:"You\\\'ve tried to sign in too many times with an incorrect account or password."') >= 0
+    ) {
       throw WrongCredentialsLimitError.create();
-    } else if (html.indexOf("identity/confirm") >= 0) {
+    } else if (html.indexOf('identity/confirm') >= 0) {
       throw IdentityCheckRequired.create();
-    } else if (html.indexOf("account.live.com/recover?") >= 0) {
+    } else if (html.indexOf('account.live.com/recover?') >= 0) {
       throw AccountRecoverRestriction.create();
-    } else if (html.indexOf("upsell") >= 0) {
+    } else if (html.indexOf('upsell') >= 0) {
       throw UpsellOfferError.create();
-    } else if (html.indexOf("GoogleRedirectUrl") >= 0) {
+    } else if (html.indexOf('GoogleRedirectUrl') >= 0) {
       throw GoogleAuthRequired.create();
-    } else if (html.indexOf("Help us protect your account")  >= 0) {
+    } else if (html.indexOf('Help us protect your account') >= 0) {
       throw MicrosoftAuthenticator.create();
     } else if (html.indexOf("That Microsoft account doesn\\'t exist") >= 0) {
       throw AccountNotFound.create();
-    } else if (formSubmitUrl !== undefined && formSubmitUrl !== "") {
-      if (formSubmitUrl.indexOf("Abuse") >= 0) {
+    } else if (formSubmitUrl !== undefined && formSubmitUrl !== '') {
+      if (formSubmitUrl.indexOf('Abuse') >= 0) {
         throw AbuseBehavior.create();
-      } else if (formSubmitUrl.indexOf("/login") >= 0) {
-      } else if (formSubmitUrl.indexOf("/remind") >= 0) {
+      } else if (formSubmitUrl.indexOf('/remind') >= 0) {
         throw AccountUpdate.create();
       }
     } else {
@@ -433,7 +436,7 @@ export async function getSkypeToken(options: GetSkypeTokenOptions): Promise<Skyp
     const res: io.Response = await requestSkypeToken(options);
     const scrapped: SkypeTokenResponse = scrapSkypeTokenResponse(res.body);
     // Expires in (seconds) (default: 1 day)
-    const expiresIn: number = typeof scrapped.expires_in === "number" ? scrapped.expires_in : 864000;
+    const expiresIn: number = typeof scrapped.expires_in === 'number' ? scrapped.expires_in : 864000;
     return {
       value: scrapped.skypetoken,
       expirationDate: new Date(startTime + expiresIn * 1000),
@@ -451,19 +454,19 @@ export async function getSkypeToken(options: GetSkypeTokenOptions): Promise<Skyp
 }
 
 export async function requestSkypeToken(options: GetSkypeTokenOptions): Promise<io.Response> {
-  const url: string = urlParser.resolve(skypeLoginUri, "microsoft");
+  const url: string = urlParser.resolve(skypeLoginUri, 'microsoft');
 
   const queryString: { [key: string]: string } = {
-    client_id: "578134",
-    redirect_uri: "https://web.skype.com",
+    client_id: '578134',
+    redirect_uri: 'https://web.skype.com',
   };
 
   const formData: { [key: string]: string } = {
     t: options.liveToken,
-    client_id: "578134",
-    oauthPartner: "999",
-    site_name: "lw.skype.com",
-    redirect_uri: "https://web.skype.com",
+    client_id: '578134',
+    oauthPartner: '999',
+    site_name: 'lw.skype.com',
+    redirect_uri: 'https://web.skype.com',
   };
 
   const postOptions: io.PostOptions = {
@@ -474,7 +477,8 @@ export async function requestSkypeToken(options: GetSkypeTokenOptions): Promise<
   };
 
   try {
-    return options.httpIo.post(postOptions);
+    const result = await options.httpIo.post(postOptions);
+    return result;
   } catch (err) {
     throw httpErrors.RequestError.create(err, postOptions);
   }
@@ -493,15 +497,15 @@ export interface SkypeTokenResponse {
  */
 export function scrapSkypeTokenResponse(html: string): SkypeTokenResponse {
   // TODO(demurgos): Handle .load errors (invalid HTML)
-  const $: CheerioStatic = cheerio.load(html);
-  const skypeTokenNode: Cheerio = $("input[name=skypetoken]");
+  const $: cheerio.Root = cheerio.load(html);
+  const skypeTokenNode: cheerio.Cheerio = $('input[name=skypetoken]');
   // In seconds
-  const expiresInNode: Cheerio = $("input[name=expires_in]");
+  const expiresInNode: cheerio.Cheerio = $('input[name=expires_in]');
 
   const skypeToken: string | undefined = skypeTokenNode.val();
   const expiresIn: number | undefined = parseInt(expiresInNode.val(), 10);
 
-  if (typeof skypeToken !== "string") {
+  if (typeof skypeToken !== 'string') {
     getSkypeTokenErrors.SkypeTokenNotFoundError.create(html);
   }
 
